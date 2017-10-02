@@ -26,7 +26,7 @@ public final class Core {
         self.managedPointer = managedPointer
     }
     
-    internal convenience init(options: [String] = []) {
+    internal convenience init(options: [String] = CommandLine.arguments) {
         
         let count = options.count
         
