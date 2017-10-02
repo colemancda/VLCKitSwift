@@ -1,0 +1,6 @@
+module CVLC {
+    
+    umbrella header "vlc/vlc.h"
+    export *
+}
+
