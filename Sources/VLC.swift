@@ -30,9 +30,7 @@ public final class Core {
         
         let count = options.count
         
-        
-        
-        guard let rawPointer = libvlc_new(count, $0)
+        guard let rawPointer = options.withCString(body: { libvlc_new(Int32(count), $0) })
             else { fatalError("Could not initialize new instance") }
         
         self.init(ManagedPointer(UnmanagedPointer(rawPointer)))

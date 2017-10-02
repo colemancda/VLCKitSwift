@@ -503,13 +503,26 @@ internal extension String {
     }
 }
 
+internal extension Array where Element == String {
+    
+    func withCString <Result> (body: @escaping (UnsafePointer<UnsafePointer<CChar>?>?) throws -> Result) rethrows -> Result {
+        
+        let cStringArray = CStringArray(strings: Array(self))
+        
+        guard let rawPointer = cStringArray.rawPointer
+            else { return try body(nil) }
+        
+        return try rawPointer.withMemoryRebound(to: UnsafePointer<CChar>?.self, capacity: cStringArray.count, { try body($0)})
+    }
+}
+
 // MARK: - CStringArray
 
-internal class CStringArray: Handle {
+internal class CStringArray {
     
     typealias RawPointer = UnsafeMutablePointer<RawString>?
     
-    typealias RawString = UnsafeMutablePointer<CChar>
+    typealias RawString = UnsafeMutablePointer<CChar>?
     
     let rawPointer: RawPointer
     
@@ -519,41 +532,33 @@ internal class CStringArray: Handle {
         
         guard let rawPointer = self.rawPointer, count > 0 else { return }
         
-        for 0 ..< count {
+        for index in 0 ..< count {
             
-            
-        }
-            
-        
-        for rawString in rawPointer {
-            
-            let count = strlen(rawPointer)
-            
-            
+            if let cString = rawPointer[index] {
+                
+                // free string
+                free(cString)
+            }
         }
         
+        // free array
         rawPointer.deallocate(capacity: count)
     }
     
-    init(strings: [String] = [], encoding: String.Encoding = .utf8) {
+    init(strings: [String] = []) {
         
         self.count = strings.count
         
         guard count > 0
-            else { self.rawPointer = nil }
+            else { self.rawPointer = nil; return }
         
         let stringsArray = UnsafeMutablePointer<RawString>.allocate(capacity: count)
         
         for (index, string) in strings.enumerated() {
             
-            let cString = string.withCString(encodedAs: encoding, {
-                
-                let count = strlen(rawPointer)
-                
-                
-            })
-                stringsArray[index] = $0
-            })
+            let cString = string.withCString { strdup($0) }
+            
+            stringsArray[index] = cString
         }
         
         self.rawPointer = stringsArray
