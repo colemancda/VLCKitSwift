@@ -465,6 +465,22 @@ internal struct CopyOnWrite <Reference: CopyableHandle> {
 
 // MARK: - Swift stdlib extensions
 
+internal extension CInt {
+    static var success: CInt { return 0 }
+    static var error: CInt { return -1 }
+}
+
+internal extension CInt {
+    
+    var boolValue: Bool {
+        switch self {
+        case 1: return true
+        case 0: return false
+        default: return self > 0
+        }
+    }
+}
+
 import class Foundation.NSString
 
 internal extension String {
@@ -503,7 +519,7 @@ internal extension String {
     }
 }
 
-internal extension Array where Element == String {
+internal extension Collection where Element == String {
     
     func withCString <Result> (body: @escaping (UnsafePointer<UnsafePointer<CChar>?>?) throws -> Result) rethrows -> Result {
         
@@ -530,13 +546,14 @@ internal class CStringArray {
     
     deinit {
         
+        // only free if C array was created
         guard let rawPointer = self.rawPointer, count > 0 else { return }
         
         for index in 0 ..< count {
             
             if let cString = rawPointer[index] {
                 
-                // free string
+                // free string created by `strdup()`
                 free(cString)
             }
         }
@@ -553,10 +570,13 @@ internal class CStringArray {
             else { self.rawPointer = nil; return }
         
         let stringsArray = UnsafeMutablePointer<RawString>.allocate(capacity: count)
+        stringsArray.initialize(to: nil, count: count)
         
         for (index, string) in strings.enumerated() {
             
-            let cString = string.withCString { strdup($0) }
+            guard let ownedCString = string.vlcCString, // only valid for lifetime of string
+                let cString = strdup(ownedCString) // copy
+                else { continue } // this element will be nil
             
             stringsArray[index] = cString
         }

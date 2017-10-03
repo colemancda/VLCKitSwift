@@ -26,7 +26,9 @@ public final class Core {
         self.managedPointer = managedPointer
     }
     
-    internal convenience init(options: [String] = CommandLine.arguments) {
+    internal convenience init(configuration: Configuration = .default) {
+        
+        let options = configuration.options.map { $0.rawValue }
         
         let count = options.count
         
@@ -38,11 +40,69 @@ public final class Core {
     
     // MARK: - Accessors
     
+    public static var version: String {
+        
+        get { return String(vlcCString: libvlc_get_version()) ?? "" }
+    }
     
+    public static var compiler: String {
+        
+        get { return String(vlcCString: libvlc_get_compiler()) ?? "" }
+    }
+    
+    /// Retrieve VLC changeset.
+    ///
+    /// Example: "aa9bce0bc4"
+    ///
+    /// - Return: a string containing the libvlc changeset
+    public static var changeset: String {
+        
+        get { return String(vlcCString: libvlc_get_changeset()) ?? "" }
+    }
+    
+    public var log: Log.Callback? {
+        
+        didSet { updateLogging() }
+    }
+    
+    private func updateLogging() {
+        
+        if log == nil {
+            
+            libvlc_log_unset(rawPointer)
+            
+        } else {
+            
+            let objectPointer = Swift.Unmanaged.passUnretained(self).toOpaque()
+            
+            libvlc_log_set(rawPointer, { (data, level, context, format, args) in
+                
+                guard let objectPointer = UnsafeRawPointer(data)
+                    else { return }
+                
+                let message = Log.Message.from(callback: (level: level, context: context, format: format, arguments: args))
+                                
+                let core = Swift.Unmanaged<Core>.fromOpaque(objectPointer).takeUnretainedValue()
+                
+                core.log?(message)
+                
+            }, objectPointer)
+        }
+    }
     
     // MARK: - Methods
     
+    /// Sets the application name. LibVLC passes this as the user agent string when a protocol requires it.
+    public func setHumanReadableName(_ name: String, with userAgent: String) {
+        
+        libvlc_set_user_agent(rawPointer, name.vlcCString, userAgent.vlcCString)
+    }
     
+    /// Sets some meta-information about the application.
+    public func setApplication(identifier: String, version: String, iconName: String) {
+        
+        libvlc_set_app_id(rawPointer, identifier.vlcCString, version.vlcCString, iconName.vlcCString)
+    }
 }
 
 // MARK: - Internal

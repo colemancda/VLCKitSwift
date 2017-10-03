@@ -8,6 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		52D6D9871BEFF229002C0205 /* VLCKitSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D6D97C1BEFF229002C0205 /* VLCKitSwift.framework */; };
+		6E2BFEA51F8336A400D0A45A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA41F8336A400D0A45A /* Log.swift */; };
+		6E2BFEA61F8336A400D0A45A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA41F8336A400D0A45A /* Log.swift */; };
+		6E2BFEA71F8336A400D0A45A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA41F8336A400D0A45A /* Log.swift */; };
+		6E2BFEA81F8336A400D0A45A /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA41F8336A400D0A45A /* Log.swift */; };
+		6E2BFEAA1F8344C200D0A45A /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA91F8344C200D0A45A /* Media.swift */; };
+		6E2BFEAB1F8344C200D0A45A /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA91F8344C200D0A45A /* Media.swift */; };
+		6E2BFEAC1F8344C200D0A45A /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA91F8344C200D0A45A /* Media.swift */; };
+		6E2BFEAD1F8344C200D0A45A /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEA91F8344C200D0A45A /* Media.swift */; };
+		6E2BFEAF1F8344D200D0A45A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEAE1F8344D200D0A45A /* Player.swift */; };
+		6E2BFEB01F8344D200D0A45A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEAE1F8344D200D0A45A /* Player.swift */; };
+		6E2BFEB11F8344D200D0A45A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEAE1F8344D200D0A45A /* Player.swift */; };
+		6E2BFEB21F8344D200D0A45A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEAE1F8344D200D0A45A /* Player.swift */; };
+		6E2BFEB41F83495A00D0A45A /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB31F83495900D0A45A /* MediaType.swift */; };
+		6E2BFEB51F83495A00D0A45A /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB31F83495900D0A45A /* MediaType.swift */; };
+		6E2BFEB61F83495A00D0A45A /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB31F83495900D0A45A /* MediaType.swift */; };
+		6E2BFEB71F83495A00D0A45A /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB31F83495900D0A45A /* MediaType.swift */; };
+		6E2BFEB91F8349DB00D0A45A /* Enumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */; };
+		6E2BFEBA1F8349DB00D0A45A /* Enumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */; };
+		6E2BFEBB1F8349DB00D0A45A /* Enumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */; };
+		6E2BFEBC1F8349DB00D0A45A /* Enumeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */; };
 		6E3161781F828E29008C3AC0 /* MobileVLCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E3161771F828E24008C3AC0 /* MobileVLCKit.framework */; };
 		6E31617B1F82A39B008C3AC0 /* Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31617A1F82A39B008C3AC0 /* Internal.swift */; };
 		6E31617C1F82A39B008C3AC0 /* Internal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31617A1F82A39B008C3AC0 /* Internal.swift */; };
@@ -22,10 +42,10 @@
 		6E31618C1F82B201008C3AC0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E31618B1F82B201008C3AC0 /* AudioToolbox.framework */; };
 		6E31618E1F82B20A008C3AC0 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E31618D1F82B20A008C3AC0 /* OpenGLES.framework */; };
 		6E3161901F82B213008C3AC0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E31618F1F82B213008C3AC0 /* CoreGraphics.framework */; };
-		6E3161921F82B240008C3AC0 /* Drawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* Drawable.swift */; };
-		6E3161931F82B240008C3AC0 /* Drawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* Drawable.swift */; };
-		6E3161941F82B240008C3AC0 /* Drawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* Drawable.swift */; };
-		6E3161951F82B240008C3AC0 /* Drawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* Drawable.swift */; };
+		6E3161921F82B240008C3AC0 /* DarwinDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* DarwinDrawable.swift */; };
+		6E3161931F82B240008C3AC0 /* DarwinDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* DarwinDrawable.swift */; };
+		6E3161941F82B240008C3AC0 /* DarwinDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* DarwinDrawable.swift */; };
+		6E3161951F82B240008C3AC0 /* DarwinDrawable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3161911F82B240008C3AC0 /* DarwinDrawable.swift */; };
 		6E3161991F82B2E2008C3AC0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E3161981F82B2E2008C3AC0 /* UIKit.framework */; };
 		6EE6CB931F82B962004C3973 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE6CB921F82B961004C3973 /* libstdc++.6.0.9.tbd */; };
 		6EE6CB951F83079E004C3973 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6CB941F83079E004C3973 /* Configuration.swift */; };
@@ -72,6 +92,11 @@
 		52D6D9E21BEFFF6E002C0205 /* VLCKitSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VLCKitSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6D9F01BEFFFBE002C0205 /* VLCKitSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VLCKitSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52D6DA0F1BF000BD002C0205 /* VLCKitSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VLCKitSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E2BFEA41F8336A400D0A45A /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		6E2BFEA91F8344C200D0A45A /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
+		6E2BFEAE1F8344D200D0A45A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		6E2BFEB31F83495900D0A45A /* MediaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
+		6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enumeration.swift; sourceTree = "<group>"; };
 		6E31610B1F828E24008C3AC0 /* deprecated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deprecated.h; sourceTree = "<group>"; };
 		6E31610C1F828E24008C3AC0 /* libvlc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libvlc.h; sourceTree = "<group>"; };
 		6E31610D1F828E24008C3AC0 /* libvlc_dialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libvlc_dialog.h; sourceTree = "<group>"; };
@@ -190,7 +215,7 @@
 		6E31618B1F82B201008C3AC0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		6E31618D1F82B20A008C3AC0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		6E31618F1F82B213008C3AC0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		6E3161911F82B240008C3AC0 /* Drawable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drawable.swift; sourceTree = "<group>"; };
+		6E3161911F82B240008C3AC0 /* DarwinDrawable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinDrawable.swift; sourceTree = "<group>"; };
 		6E3161981F82B2E2008C3AC0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6EE6CB921F82B961004C3973 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
 		6EE6CB941F83079E004C3973 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
@@ -467,7 +492,12 @@
 				8933C7841EB5B820000D00A4 /* Core.swift */,
 				6EE6CB941F83079E004C3973 /* Configuration.swift */,
 				6E31617A1F82A39B008C3AC0 /* Internal.swift */,
-				6E3161911F82B240008C3AC0 /* Drawable.swift */,
+				6E3161911F82B240008C3AC0 /* DarwinDrawable.swift */,
+				6E2BFEA41F8336A400D0A45A /* Log.swift */,
+				6E2BFEA91F8344C200D0A45A /* Media.swift */,
+				6E2BFEAE1F8344D200D0A45A /* Player.swift */,
+				6E2BFEB31F83495900D0A45A /* MediaType.swift */,
+				6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -777,8 +807,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E3161921F82B240008C3AC0 /* Drawable.swift in Sources */,
+				6E3161921F82B240008C3AC0 /* DarwinDrawable.swift in Sources */,
 				6E31617B1F82A39B008C3AC0 /* Internal.swift in Sources */,
+				6E2BFEBC1F8349DB00D0A45A /* Enumeration.swift in Sources */,
+				6E2BFEAA1F8344C200D0A45A /* Media.swift in Sources */,
+				6E2BFEA51F8336A400D0A45A /* Log.swift in Sources */,
+				6E2BFEB41F83495A00D0A45A /* MediaType.swift in Sources */,
+				6E2BFEAF1F8344D200D0A45A /* Player.swift in Sources */,
 				6E31617F1F82AC9D008C3AC0 /* Core.swift in Sources */,
 				6EE6CB951F83079E004C3973 /* Configuration.swift in Sources */,
 			);
@@ -796,8 +831,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E3161941F82B240008C3AC0 /* Drawable.swift in Sources */,
+				6E3161941F82B240008C3AC0 /* DarwinDrawable.swift in Sources */,
 				6E31617D1F82A39B008C3AC0 /* Internal.swift in Sources */,
+				6E2BFEBB1F8349DB00D0A45A /* Enumeration.swift in Sources */,
+				6E2BFEAC1F8344C200D0A45A /* Media.swift in Sources */,
+				6E2BFEA71F8336A400D0A45A /* Log.swift in Sources */,
+				6E2BFEB61F83495A00D0A45A /* MediaType.swift in Sources */,
+				6E2BFEB11F8344D200D0A45A /* Player.swift in Sources */,
 				8933C7871EB5B820000D00A4 /* Core.swift in Sources */,
 				6EE6CB971F83079E004C3973 /* Configuration.swift in Sources */,
 			);
@@ -807,8 +847,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E3161951F82B240008C3AC0 /* Drawable.swift in Sources */,
+				6E3161951F82B240008C3AC0 /* DarwinDrawable.swift in Sources */,
 				6E31617E1F82A39B008C3AC0 /* Internal.swift in Sources */,
+				6E2BFEB91F8349DB00D0A45A /* Enumeration.swift in Sources */,
+				6E2BFEAD1F8344C200D0A45A /* Media.swift in Sources */,
+				6E2BFEA81F8336A400D0A45A /* Log.swift in Sources */,
+				6E2BFEB71F83495A00D0A45A /* MediaType.swift in Sources */,
+				6E2BFEB21F8344D200D0A45A /* Player.swift in Sources */,
 				8933C7881EB5B820000D00A4 /* Core.swift in Sources */,
 				6EE6CB981F83079E004C3973 /* Configuration.swift in Sources */,
 			);
@@ -818,8 +863,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E3161931F82B240008C3AC0 /* Drawable.swift in Sources */,
+				6E3161931F82B240008C3AC0 /* DarwinDrawable.swift in Sources */,
 				6E31617C1F82A39B008C3AC0 /* Internal.swift in Sources */,
+				6E2BFEBA1F8349DB00D0A45A /* Enumeration.swift in Sources */,
+				6E2BFEAB1F8344C200D0A45A /* Media.swift in Sources */,
+				6E2BFEA61F8336A400D0A45A /* Log.swift in Sources */,
+				6E2BFEB51F83495A00D0A45A /* MediaType.swift in Sources */,
+				6E2BFEB01F8344D200D0A45A /* Player.swift in Sources */,
 				8933C7861EB5B820000D00A4 /* Core.swift in Sources */,
 				6EE6CB961F83079E004C3973 /* Configuration.swift in Sources */,
 			);

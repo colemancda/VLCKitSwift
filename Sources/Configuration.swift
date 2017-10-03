@@ -19,6 +19,15 @@ public struct Configuration {
     }
 }
 
+public extension Configuration {
+    
+    public var isEmpty: Bool {
+        
+        return options.isEmpty
+    }
+}
+
+// MARK: - Equatable
 
 extension Configuration: Equatable {
     
@@ -28,6 +37,8 @@ extension Configuration: Equatable {
     }
 }
 
+// MARK: - Hashable
+
 extension Configuration: Hashable {
     
     public var hashValue: Int {
@@ -35,6 +46,8 @@ extension Configuration: Hashable {
         return options.hashValue
     }
 }
+
+// MARK: - ExpressibleByArrayLiteral
 
 extension Configuration: ExpressibleByArrayLiteral {
     
@@ -44,38 +57,6 @@ extension Configuration: ExpressibleByArrayLiteral {
     }
 }
 
-// MARK: - Collection
-/*
-extension Configuration: Collection {
-    
-    /// The start `Index`.
-    public var startIndex: Int {
-        
-        return 0
-    }
-    
-    /// The end `Index`.
-    ///
-    /// This is the "one-past-the-end" position, and will always be equal to the `count`.
-    public var endIndex: Int {
-        
-        return count
-    }
-    
-    public func index(before i: Int) -> Int {
-        return i - 1
-    }
-    
-    public func index(after i: Int) -> Int {
-        return i + 1
-    }
-    
-    public func makeIterator() -> IndexingIterator<NamedColorList> {
-        
-        return IndexingIterator(_elements: self)
-    }
-}
-*/
 // MARK: - Supporting Types
 
 public typealias 🔧 = Configuration.Option
@@ -86,56 +67,73 @@ public extension Configuration {
         
         public var name: Name
         
-        public var isEnabled: Bool
+        public var argument: Argument
         
-        public var value: Value?
-        
-        public init(name: Name, isEnabled: Bool = true, value: Value? = nil) {
+        public init(name: Name, argument: Argument = .none) {
             
             self.name = name
-            self.isEnabled = isEnabled
-            self.value = value
+            self.argument = argument
         }
     }
 }
 
 public extension Configuration.Option {
     
-    public enum Value {
+    public var isEnabled: Bool {
         
-        case string(Swift.String)
-        case number(Int)
-    }
-}
-
-extension Configuration.Option.Value: ExpressibleByStringLiteral {
-    
-    public init(stringLiteral value: Self.StringLiteralType) {
-        
-        self = .string(value)
-    }
-}
-
-extension Configuration.Option.Value: RawRepresentable {
-    
-    public init(rawValue: String) {
-        
-        if let number = Int(rawValue) {
-            
-            self = .number(number)
-            
-        } else {
-            
-            self = .string(rawValue)
+        switch argument {
+        case .disabled: return true
+        case .none, .value: return false
         }
     }
     
-    public var rawValue: String {
+    public var value: String {
         
-        switch self {
-            case let .number(value): return "\(value)"
-            case let .string(value): return value
+        switch argument {
+        case .disabled, .none: return ""
+        case let .value(value): return value
         }
+    }
+}
+
+public extension Configuration.Option {
+    
+    public init(_ name: Name) {
+        
+        self.name = name
+        self.argument = .none
+    }
+    
+    public init(_ name: Name, _ value: String) {
+        
+        self.name = name
+        self.argument = .value(value)
+    }
+    
+    public init(_ name: Name, _ value: Int) {
+        
+        self.name = name
+        self.argument = .value("\(value)")
+    }
+    
+    public static func no(_ name: Name) -> Configuration.Option {
+        
+        return Configuration.Option(name: name, argument: .disabled)
+    }
+}
+
+public func 🚫(_ name: Configuration.Option.Name) -> Configuration.Option {
+    
+    return .no(name)
+}
+
+public extension Configuration.Option {
+    
+    public enum Argument {
+        
+        case none
+        case disabled
+        case value(String)
     }
 }
 
@@ -177,36 +175,67 @@ extension Configuration.Option: RawRepresentable {
     
     public var rawValue: String {
         
-        return "--" + (isEnabled ? "" : "no-") + name.rawValue + (value == nil ? "" : "=\(value?.rawValue ?? "")")
+        return "--" + (isEnabled ? "" : "no-") + name.rawValue + (value.isEmpty ? "" : "=" + value)
     }
 }
 
 extension Configuration {
     
+    /// An empty configuration.
+    public static var empty: Configuration { return [] }
+    
+    /// Create a configuration based on the running program's command line parameters.
+    public static var commandLine: Configuration {
+        
+        let options = CommandLine.arguments.flatMap { Option(rawValue: $0) }
+        
+        return Configuration(options: Set(options))
+    }
+    
+    /// The default configuration for the current platform and hardware.
     public static var `default`: Configuration {
         
-        #if os(iOS)
-            return iOS
+        #if os(iOS) || os(tvOS)
+        return .iOS
+        #elseif os(macOS)
+        return .macOS
+        #else
+        return []
         #endif
     }
     
+    /// Configuration for iOS devices.
     private static var iOS: Configuration {
         
-        var configuration: Configuration = [
-            🔧(name: .color, isEnabled: false),
-            🔧(name: .osd, isEnabled: false),
-            🔧(name: .videoTitleShow, isEnabled: false),
-            🔧(name: .stats, isEnabled: false),
-            🔧(name: .snapshotPreview, isEnabled: false),
-            🔧(name: .avcodecFast),
-            🔧(name: .textRenderer, value: "freetype"),
-            🔧(name: .aviIndex, value: 3)
+        var configuration: 🛠 = [
+            🚫(.color),
+            🚫(.osd),
+            🚫(.videoTitleShow),
+            🚫(.stats),
+            🚫(.snapshotPreview),
+            🔧(.textRenderer, "freetype"),
+            🔧(.aviIndex, 3)
         ]
         
-        #if arch(i386) || arch(x86_64)
-        //parameters.append
+        #if !__LP64__ && !NOSCARYCODECS
+        configuration.options.insert(🔧(.avcodecFast))
         #endif
         
         return configuration
+    }
+    
+    /// Configuration for macOS computers.
+    private static var macOS: Configuration {
+        
+        return [
+            🔧(.playAndPause),
+            🚫(.color),
+            🚫(.videoTitleShow),
+            🔧(.verbose, 4),
+            🚫(.soundOutputKeep),
+            🔧(.videoOutput, "macosx"),
+            🔧(.textRenderer, "freetype"),
+            🔧(.extraintf, "macosx_dialog_provider")
+        ]
     }
 }
