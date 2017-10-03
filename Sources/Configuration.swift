@@ -6,9 +6,83 @@
 //  Copyright © 2017 ColemanCDA. All rights reserved.
 //
 
-public extension Core {
+public typealias 🛠 = Configuration
+
+/// VLC settings
+public struct Configuration {
     
-    public struct Configuration {
+    public var options: Set<Option>
+    
+    public init(options: Set<Option> = []) {
+        
+        self.options = options
+    }
+}
+
+
+extension Configuration: Equatable {
+    
+    public static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+        
+        return lhs.options == rhs.options
+    }
+}
+
+extension Configuration: Hashable {
+    
+    public var hashValue: Int {
+        
+        return options.hashValue
+    }
+}
+
+extension Configuration: ExpressibleByArrayLiteral {
+    
+    public init(arrayLiteral elements: Option...) {
+        
+        self.init(options: Set(elements))
+    }
+}
+
+// MARK: - Collection
+/*
+extension Configuration: Collection {
+    
+    /// The start `Index`.
+    public var startIndex: Int {
+        
+        return 0
+    }
+    
+    /// The end `Index`.
+    ///
+    /// This is the "one-past-the-end" position, and will always be equal to the `count`.
+    public var endIndex: Int {
+        
+        return count
+    }
+    
+    public func index(before i: Int) -> Int {
+        return i - 1
+    }
+    
+    public func index(after i: Int) -> Int {
+        return i + 1
+    }
+    
+    public func makeIterator() -> IndexingIterator<NamedColorList> {
+        
+        return IndexingIterator(_elements: self)
+    }
+}
+*/
+// MARK: - Supporting Types
+
+public typealias 🔧 = Configuration.Option
+
+public extension Configuration {
+    
+    public struct Option {
         
         public var name: Name
         
@@ -25,7 +99,7 @@ public extension Core {
     }
 }
 
-public extension Core.Configuration {
+public extension Configuration.Option {
     
     public enum Value {
         
@@ -34,7 +108,15 @@ public extension Core.Configuration {
     }
 }
 
-extension Core.Configuration.Value: RawRepresentable {
+extension Configuration.Option.Value: ExpressibleByStringLiteral {
+    
+    public init(stringLiteral value: Self.StringLiteralType) {
+        
+        self = .string(value)
+    }
+}
+
+extension Configuration.Option.Value: RawRepresentable {
     
     public init(rawValue: String) {
         
@@ -57,21 +139,15 @@ extension Core.Configuration.Value: RawRepresentable {
     }
 }
 
-public extension Core.Configuration.Value {
+extension Configuration.Option: Hashable {
     
-    public var isEmpty: Bool {
+    public var hashValue: Int {
         
-        switch self {
-        case .none:
-            return true
-        case .string,
-             .number:
-            return false
-        }
+        return rawValue.hashValue
     }
 }
 
-public extension Core.Configuration {
+public extension Configuration.Option {
     
     public enum Name: String {
         
@@ -91,7 +167,7 @@ public extension Core.Configuration {
     }
 }
 
-extension Core.Configuration: RawRepresentable {
+extension Configuration.Option: RawRepresentable {
     
     public init?(rawValue: String) {
         
@@ -105,32 +181,32 @@ extension Core.Configuration: RawRepresentable {
     }
 }
 
-extension Core.Configuration {
+extension Configuration {
     
-    public static var `default`: Parameters {
+    public static var `default`: Configuration {
         
         #if os(iOS)
             return iOS
         #endif
     }
     
-    private static var iOS: Set<Configuration> {
+    private static var iOS: Configuration {
         
-        var parameters: Set<Configuration> = [
-            .noColor,
-            .noOsd,
-            .noVideoTitleShow,
-            "--no-stats",
-            "--no-snapshot-preview",
-            "--avcodec-fast",
-            "--text-renderer=freetype",
-            "--avi-index=3"
+        var configuration: Configuration = [
+            🔧(name: .color, isEnabled: false),
+            🔧(name: .osd, isEnabled: false),
+            🔧(name: .videoTitleShow, isEnabled: false),
+            🔧(name: .stats, isEnabled: false),
+            🔧(name: .snapshotPreview, isEnabled: false),
+            🔧(name: .avcodecFast),
+            🔧(name: .textRenderer, value: "freetype"),
+            🔧(name: .aviIndex, value: 3)
         ]
         
-        #if arch(i386)
-            parameters.append
+        #if arch(i386) || arch(x86_64)
+        //parameters.append
         #endif
         
-        return parameters
+        return configuration
     }
 }
