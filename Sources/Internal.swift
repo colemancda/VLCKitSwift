@@ -53,7 +53,7 @@ extension Handle {
 internal protocol CopyableHandle: Handle {
     
     /// Clone the handle object.
-    var copy: Self? { get }
+    var _copy: Self? { get }
 }
 
 // MARK: - UserDataHandle
@@ -381,7 +381,7 @@ internal extension Handle {
         
         if copy {
             
-            newValueRawPointer = value?.internalReference.reference.copy!.rawPointer
+            newValueRawPointer = value?.internalReference.reference._copy!.rawPointer
             
         } else {
             
@@ -393,7 +393,7 @@ internal extension Handle {
 }
 
 /// Encapsulates behavior surrounding value semantics and copy-on-write behavior
-/// Modified version of https://github.com/klundberg/CopyOnWrite
+/// - Note: Modified version of [klundberg/CopyOnWrite](https://github.com/klundberg/CopyOnWrite)
 internal struct CopyOnWrite <Reference: CopyableHandle> {
     
     /// Needed for `isKnownUniquelyReferenced`
@@ -442,7 +442,7 @@ internal struct CopyOnWrite <Reference: CopyableHandle> {
             // copy the reference if multiple structs are backed by the reference
             if isUniquelyReferenced == false {
                 
-                guard let copy = _reference.unbox.copy
+                guard let copy = _reference.unbox._copy
                     else { fatalError("Could not duplicate internal reference type") }
                 
                 _reference = Box(copy)

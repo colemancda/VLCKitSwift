@@ -29,6 +29,8 @@ public final class Media {
     }
     
     /// Create a media with a certain given media resource location, for instance a valid URL.
+    ///
+    /// - Returns: Initializes a new VLCMedia object to use the specified URL
     public convenience init?(url: URL, core: Core = .shared) {
         
         let scheme = url.scheme ?? ""
@@ -61,6 +63,15 @@ public final class Media {
         setUserData() // set user data for callbacks
     }
     
+    /// Duplicate the media object.
+    public var copy: Media {
+        
+        guard let copy = _copy
+            else { fatalError("Could not duplicate object \(self)") }
+        
+        return copy
+    }
+    
     // MARK: - Accessors
     /*
     /// Get the media type of the media descriptor object.
@@ -76,7 +87,6 @@ public final class Media {
     }
     
     // MARK: - Methods
-    
     
 }
 
@@ -117,6 +127,20 @@ extension Media: UserDataHandle {
     
     static var userDataSetFunction: (_ UnmanagedPointer: OpaquePointer?, _ userdata: UnsafeMutableRawPointer?) -> () {
         return libvlc_media_set_user_data
+    }
+}
+
+extension Media: CopyableHandle {
+    
+    var _copy: Media? {
+        
+        guard let rawPointer = libvlc_media_duplicate(rawPointer)
+            else { return nil }
+        
+        let copy = Media(ManagedPointer(UnmanagedPointer(rawPointer)))
+        copy.setUserData()
+        
+        return copy
     }
 }
 

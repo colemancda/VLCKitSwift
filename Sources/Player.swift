@@ -22,6 +22,15 @@ public final class Player {
         self.managedPointer = managedPointer
     }
     
+    /// Create an empty Media Player object.
+    public convenience init(core: Core = .shared) {
+        
+        guard let rawPointer = libvlc_media_player_new(core.rawPointer)
+            else { fatalError("Could not initialize instance") }
+        
+        self.init(ManagedPointer(UnmanagedPointer(rawPointer)))
+    }
+    
     // MARK: - Accessors
     
     #if os(iOS) || os(tvOS) || os(macOS)
@@ -48,11 +57,13 @@ public final class Player {
     
     #endif
     
+    /// Whether the media player is playing.
     public var isPlaying: Bool {
         
         get { return libvlc_media_player_is_playing(rawPointer).boolValue }
     }
     
+    /// Whether the player able to play.
     public var willPlay: Bool {
         
         get { return libvlc_media_player_will_play(rawPointer).boolValue }
@@ -64,7 +75,7 @@ public final class Player {
         get { return UInt(libvlc_audio_equalizer_get_band_count()) }
     }
     
-    
+    /// The current audio channel.
     public var audioChannel: Int {
         
         get { return Int(libvlc_audio_get_channel(rawPointer)) }
@@ -85,17 +96,20 @@ public final class Player {
     
     // MARK: - Methods
     
+    /// Play media.
     @discardableResult
     public func play() -> Bool {
         
         return libvlc_media_player_play(rawPointer) == .success
     }
     
+    /// Toggle pause (no effect if there is no media).
     public func pause() {
         
         return libvlc_media_player_pause(rawPointer)
     }
     
+    /// Stop (no effect if there is no media). 
     public func stop() {
         
         return libvlc_media_player_stop(rawPointer)

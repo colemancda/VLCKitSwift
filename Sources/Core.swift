@@ -20,6 +20,12 @@ public final class Core {
     internal let managedPointer: ManagedPointer<UnmanagedPointer>
     
     // MARK: - Initialization
+    
+    deinit {
+        
+        // unregister and reset logging (in case Swift object is released before C instance)
+        self.log = nil
+    }
 
     internal init(_ managedPointer: ManagedPointer<UnmanagedPointer>) {
         

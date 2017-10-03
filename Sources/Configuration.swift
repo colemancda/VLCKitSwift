@@ -11,6 +11,7 @@ public typealias 🛠 = Configuration
 /// VLC settings
 public struct Configuration {
     
+    /// The configuration's options.
     public var options: Set<Option>
     
     public init(options: Set<Option> = []) {
@@ -57,7 +58,72 @@ extension Configuration: ExpressibleByArrayLiteral {
     }
 }
 
+// MARK: - Static Instances
+
+extension Configuration {
+    
+    /// An empty configuration.
+    public static var empty: Configuration { return [] }
+    
+    /// Create a configuration based on the running program's command line parameters.
+    public static var commandLine: Configuration {
+        
+        let options = CommandLine.arguments.flatMap { Option(rawValue: $0) }
+        
+        return Configuration(options: Set(options))
+    }
+    
+    /// The default configuration for the current platform and hardware.
+    public static var `default`: Configuration {
+        
+        #if os(iOS) || os(tvOS)
+            return .iOS
+        #elseif os(macOS)
+            return .macOS
+        #else
+            return []
+        #endif
+    }
+    
+    /// Configuration for iOS devices.
+    private static var iOS: Configuration {
+        
+        var configuration: 🛠 = [
+            🚫(.color),
+            🚫(.osd),
+            🚫(.videoTitleShow),
+            🚫(.stats),
+            🚫(.snapshotPreview),
+            🔧(.textRenderer, "freetype"),
+            🔧(.aviIndex, 3)
+        ]
+        
+        #if !__LP64__ && !NOSCARYCODECS
+            configuration.options.insert(🔧(.avcodecFast))
+        #endif
+        
+        return configuration
+    }
+    
+    /// Configuration for macOS computers.
+    private static var macOS: Configuration {
+        
+        return [
+            🔧(.playAndPause),
+            🚫(.color),
+            🚫(.videoTitleShow),
+            🔧(.verbose, 4),
+            🚫(.soundOutputKeep),
+            🔧(.videoOutput, "macosx"),
+            🔧(.textRenderer, "freetype"),
+            🔧(.extraintf, "macosx_dialog_provider")
+        ]
+    }
+}
+
 // MARK: - Supporting Types
+
+// MARK: - Option
 
 public typealias 🔧 = Configuration.Option
 
@@ -96,6 +162,36 @@ public extension Configuration.Option {
     }
 }
 
+extension Configuration.Option: RawRepresentable {
+    
+    public init?(rawValue: String) {
+        
+        // TODO: Implement parsing
+        fatalError()
+    }
+    
+    public var rawValue: String {
+        
+        return "--" + (isEnabled ? "" : "no-") + name.rawValue + (value.isEmpty ? "" : "=" + value)
+    }
+}
+
+extension Configuration.Option: Equatable {
+    
+    public static func == (lhs: Configuration.Option, rhs: Configuration.Option) -> Bool {
+        
+        return lhs.rawValue == rhs.rawValue
+    }
+}
+
+extension Configuration.Option: Hashable {
+    
+    public var hashValue: Int {
+        
+        return rawValue.hashValue
+    }
+}
+
 public extension Configuration.Option {
     
     public init(_ name: Name) {
@@ -127,23 +223,7 @@ public func 🚫(_ name: Configuration.Option.Name) -> Configuration.Option {
     return .no(name)
 }
 
-public extension Configuration.Option {
-    
-    public enum Argument {
-        
-        case none
-        case disabled
-        case value(String)
-    }
-}
-
-extension Configuration.Option: Hashable {
-    
-    public var hashValue: Int {
-        
-        return rawValue.hashValue
-    }
-}
+// MARK: Option.Name
 
 public extension Configuration.Option {
     
@@ -165,77 +245,14 @@ public extension Configuration.Option {
     }
 }
 
-extension Configuration.Option: RawRepresentable {
-    
-    public init?(rawValue: String) {
-        
-        // TODO: Implement parsing
-        fatalError()
-    }
-    
-    public var rawValue: String {
-        
-        return "--" + (isEnabled ? "" : "no-") + name.rawValue + (value.isEmpty ? "" : "=" + value)
-    }
-}
+// MARK: Option.Argument
 
-extension Configuration {
+public extension Configuration.Option {
     
-    /// An empty configuration.
-    public static var empty: Configuration { return [] }
-    
-    /// Create a configuration based on the running program's command line parameters.
-    public static var commandLine: Configuration {
+    public enum Argument {
         
-        let options = CommandLine.arguments.flatMap { Option(rawValue: $0) }
-        
-        return Configuration(options: Set(options))
-    }
-    
-    /// The default configuration for the current platform and hardware.
-    public static var `default`: Configuration {
-        
-        #if os(iOS) || os(tvOS)
-        return .iOS
-        #elseif os(macOS)
-        return .macOS
-        #else
-        return []
-        #endif
-    }
-    
-    /// Configuration for iOS devices.
-    private static var iOS: Configuration {
-        
-        var configuration: 🛠 = [
-            🚫(.color),
-            🚫(.osd),
-            🚫(.videoTitleShow),
-            🚫(.stats),
-            🚫(.snapshotPreview),
-            🔧(.textRenderer, "freetype"),
-            🔧(.aviIndex, 3)
-        ]
-        
-        #if !__LP64__ && !NOSCARYCODECS
-        configuration.options.insert(🔧(.avcodecFast))
-        #endif
-        
-        return configuration
-    }
-    
-    /// Configuration for macOS computers.
-    private static var macOS: Configuration {
-        
-        return [
-            🔧(.playAndPause),
-            🚫(.color),
-            🚫(.videoTitleShow),
-            🔧(.verbose, 4),
-            🚫(.soundOutputKeep),
-            🔧(.videoOutput, "macosx"),
-            🔧(.textRenderer, "freetype"),
-            🔧(.extraintf, "macosx_dialog_provider")
-        ]
+        case none
+        case disabled
+        case value(String)
     }
 }
