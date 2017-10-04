@@ -15,6 +15,16 @@ public final class Player {
     @_versioned
     internal let managedPointer: ManagedPointer<UnmanagedPointer>
     
+    /// Strong reference to internal handle
+    public var media: Media? {
+        
+        didSet {
+            
+            // update internal handle
+            libvlc_media_player_set_media(media?.rawPointer, media?.rawPointer)
+        }
+    }
+    
     // MARK: - Initialization
     
     internal init(_ managedPointer: ManagedPointer<UnmanagedPointer>) {
@@ -29,6 +39,17 @@ public final class Player {
             else { fatalError("Could not initialize instance") }
         
         self.init(ManagedPointer(UnmanagedPointer(rawPointer)))
+    }
+    
+    public convenience init(media: Media) {
+        
+        guard let rawPointer = libvlc_media_player_new_from_media(media.rawPointer)
+            else { fatalError("Could not initialize instance") }
+        
+        self.init(ManagedPointer(UnmanagedPointer(rawPointer)))
+        
+        // hold reference to media object
+        self.media = media
     }
     
     // MARK: - Accessors
