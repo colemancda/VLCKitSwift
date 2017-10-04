@@ -15,16 +15,6 @@ public final class Player {
     @_versioned
     internal let managedPointer: ManagedPointer<UnmanagedPointer>
     
-    /// Strong reference to internal handle
-    public var media: Media? {
-        
-        didSet {
-            
-            // update internal handle
-            libvlc_media_player_set_media(media?.rawPointer, media?.rawPointer)
-        }
-    }
-    
     // MARK: - Initialization
     
     internal init(_ managedPointer: ManagedPointer<UnmanagedPointer>) {
@@ -77,6 +67,16 @@ public final class Player {
     }
     
     #endif
+    
+    /// Strong reference to internal handle
+    public var media: Media? {
+        
+        didSet {
+            
+            // update internal handle
+            libvlc_media_player_set_media(media?.rawPointer, media?.rawPointer)
+        }
+    }
     
     /// Whether the media player is playing.
     public var isPlaying: Bool {

@@ -32,14 +32,14 @@ public final class Core {
         self.managedPointer = managedPointer
     }
     
-    internal convenience init(configuration: Configuration = .default) {
+    internal convenience init?(configuration: Configuration = .default) {
         
-        let options = configuration.options.map { $0.rawValue }
+        let options = configuration.options.rawValues
         
         let count = options.count
         
         guard let rawPointer = options.withCString(body: { libvlc_new(Int32(count), $0) })
-            else { fatalError("Could not initialize new instance") }
+            else { return nil }
         
         self.init(ManagedPointer(UnmanagedPointer(rawPointer)))
     }

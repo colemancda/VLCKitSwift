@@ -48,6 +48,10 @@
 		6E3161991F82B2E2008C3AC0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E3161981F82B2E2008C3AC0 /* UIKit.framework */; };
 		6E9AE77A1F856C4B0079984F /* libStaticLibVLC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9AE7711F856C330079984F /* libStaticLibVLC.a */; };
 		6E9AE77F1F856DCD0079984F /* DynamicMobileVLCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E9AE76F1F856C330079984F /* DynamicMobileVLCKit.framework */; };
+		6E9AE7B51F857D830079984F /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9AE7AE1F857D830079984F /* RawRepresentable.swift */; };
+		6E9AE7B61F857D830079984F /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9AE7AE1F857D830079984F /* RawRepresentable.swift */; };
+		6E9AE7B71F857D830079984F /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9AE7AE1F857D830079984F /* RawRepresentable.swift */; };
+		6E9AE7B81F857D830079984F /* RawRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9AE7AE1F857D830079984F /* RawRepresentable.swift */; };
 		6EE6CB931F82B962004C3973 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE6CB921F82B961004C3973 /* libstdc++.6.0.9.tbd */; };
 		6EE6CB951F83079E004C3973 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6CB941F83079E004C3973 /* Configuration.swift */; };
 		6EE6CB961F83079E004C3973 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6CB941F83079E004C3973 /* Configuration.swift */; };
@@ -175,6 +179,7 @@
 		6E3161981F82B2E2008C3AC0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6E9AE75C1F856C330079984F /* VLCKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VLCKit.xcodeproj; path = VLCKit/VLCKit.xcodeproj; sourceTree = "<group>"; };
 		6E9AE7631F856C330079984F /* MobileVLCKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MobileVLCKit.xcodeproj; path = VLCKit/MobileVLCKit.xcodeproj; sourceTree = "<group>"; };
+		6E9AE7AE1F857D830079984F /* RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RawRepresentable.swift; path = ../../../../../VLCKitSwift/Sources/RawRepresentable.swift; sourceTree = "<group>"; };
 		6EE6CB921F82B961004C3973 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
 		6EE6CB941F83079E004C3973 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8933C7841EB5B820000D00A4 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
@@ -340,6 +345,7 @@
 				6E2BFEAE1F8344D200D0A45A /* Player.swift */,
 				6E2BFEB31F83495900D0A45A /* MediaType.swift */,
 				6E2BFEB81F8349DA00D0A45A /* Enumeration.swift */,
+				6E9AE7AE1F857D830079984F /* RawRepresentable.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -720,6 +726,7 @@
 				6E2BFEA51F8336A400D0A45A /* Log.swift in Sources */,
 				6E2BFEB41F83495A00D0A45A /* MediaType.swift in Sources */,
 				6E2BFEAF1F8344D200D0A45A /* Player.swift in Sources */,
+				6E9AE7B71F857D830079984F /* RawRepresentable.swift in Sources */,
 				6E31617F1F82AC9D008C3AC0 /* Core.swift in Sources */,
 				6EE6CB951F83079E004C3973 /* Configuration.swift in Sources */,
 			);
@@ -744,6 +751,7 @@
 				6E2BFEA71F8336A400D0A45A /* Log.swift in Sources */,
 				6E2BFEB61F83495A00D0A45A /* MediaType.swift in Sources */,
 				6E2BFEB11F8344D200D0A45A /* Player.swift in Sources */,
+				6E9AE7B51F857D830079984F /* RawRepresentable.swift in Sources */,
 				8933C7871EB5B820000D00A4 /* Core.swift in Sources */,
 				6EE6CB971F83079E004C3973 /* Configuration.swift in Sources */,
 			);
@@ -760,6 +768,7 @@
 				6E2BFEA81F8336A400D0A45A /* Log.swift in Sources */,
 				6E2BFEB71F83495A00D0A45A /* MediaType.swift in Sources */,
 				6E2BFEB21F8344D200D0A45A /* Player.swift in Sources */,
+				6E9AE7B61F857D830079984F /* RawRepresentable.swift in Sources */,
 				8933C7881EB5B820000D00A4 /* Core.swift in Sources */,
 				6EE6CB981F83079E004C3973 /* Configuration.swift in Sources */,
 			);
@@ -776,6 +785,7 @@
 				6E2BFEA61F8336A400D0A45A /* Log.swift in Sources */,
 				6E2BFEB51F83495A00D0A45A /* MediaType.swift in Sources */,
 				6E2BFEB01F8344D200D0A45A /* Player.swift in Sources */,
+				6E9AE7B81F857D830079984F /* RawRepresentable.swift in Sources */,
 				8933C7861EB5B820000D00A4 /* Core.swift in Sources */,
 				6EE6CB961F83079E004C3973 /* Configuration.swift in Sources */,
 			);

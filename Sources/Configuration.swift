@@ -48,6 +48,16 @@ extension Configuration: Hashable {
     }
 }
 
+// MARK: - CustomStringConvertible
+
+extension Configuration: CustomStringConvertible {
+    
+    public var description: String {
+        
+        return "\(options.rawValues)"
+    }
+}
+
 // MARK: - ExpressibleByArrayLiteral
 
 extension Configuration: ExpressibleByArrayLiteral {
@@ -148,8 +158,8 @@ public extension Configuration.Option {
     public var isEnabled: Bool {
         
         switch argument {
-        case .disabled: return true
-        case .none, .value: return false
+        case .disabled: return false
+        case .none, .value: return true
         }
     }
     
