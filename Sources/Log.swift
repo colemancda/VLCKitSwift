@@ -70,16 +70,16 @@ public extension Log {
     public enum Level: Int {
         
         /// Debug message
-        case debug
+        case debug = 0
         
         /// Important informational message
-        case notice
+        case notice = 2
         
         /// Warning (potential error) message
-        case warning
+        case warning = 3
         
         /// Error message
-        case error
+        case error = 4
     }
 }
 
