@@ -12,7 +12,7 @@ import Foundation
 /// Object used for the core functionality of VLC.
 public final class Core {
     
-    public static let shared = Core()
+    public static let shared: Core = Core()!
     
     // MARK: - Properties
     
