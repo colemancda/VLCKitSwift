@@ -179,7 +179,7 @@
 		6E3161981F82B2E2008C3AC0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6E9AE75C1F856C330079984F /* VLCKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VLCKit.xcodeproj; path = VLCKit/VLCKit.xcodeproj; sourceTree = "<group>"; };
 		6E9AE7631F856C330079984F /* MobileVLCKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MobileVLCKit.xcodeproj; path = VLCKit/MobileVLCKit.xcodeproj; sourceTree = "<group>"; };
-		6E9AE7AE1F857D830079984F /* RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RawRepresentable.swift; path = ../../../../../VLCKitSwift/Sources/RawRepresentable.swift; sourceTree = "<group>"; };
+		6E9AE7AE1F857D830079984F /* RawRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawRepresentable.swift; sourceTree = "<group>"; };
 		6EE6CB921F82B961004C3973 /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
 		6EE6CB941F83079E004C3973 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		8933C7841EB5B820000D00A4 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
