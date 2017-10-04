@@ -74,7 +74,7 @@ public final class Player {
         didSet {
             
             // update internal handle
-            libvlc_media_player_set_media(media?.rawPointer, media?.rawPointer)
+            libvlc_media_player_set_media(rawPointer, media?.rawPointer)
         }
     }
     
