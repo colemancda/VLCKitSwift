@@ -86,6 +86,12 @@ public final class Media {
         get { return getString(libvlc_media_get_mrl) }
     }
     
+    /// Get current state of media descriptor object.
+    public var state: State {
+        
+        get { return State(libvlc_media_get_state(rawPointer)) }
+    }
+    
     // MARK: - Methods
     
 }

@@ -78,6 +78,12 @@ public final class Player {
         }
     }
     
+    /// Get current movie state.
+    public var state: Media.State {
+        
+        get { return Media.State(libvlc_media_player_get_state(rawPointer)) }
+    }
+    
     /// Whether the media player is playing.
     public var isPlaying: Bool {
         
