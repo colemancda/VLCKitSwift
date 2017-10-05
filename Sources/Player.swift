@@ -137,6 +137,32 @@ public final class Player {
     }
 }
 
+// MARK: - EventManager
+
+extension Player: EventEmitter {
+    
+    public var eventManager: EventManager<Player> {
+        
+        return getEventManager(libvlc_media_player_event_manager)
+    }
+}
+
+// MARK: - Supporting Types
+
+public extension Player {
+    
+    public enum State {
+        
+        case stopped
+        case opening
+        case buffering
+        case ended
+        case error
+        case playing
+        case paused
+    }
+}
+
 // MARK: - Internal
 
 extension Player: ManagedHandle {

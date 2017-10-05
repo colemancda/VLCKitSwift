@@ -73,12 +73,12 @@ public final class Media {
     }
     
     // MARK: - Accessors
-    /*
+    
     /// Get the media type of the media descriptor object.
     public var type: MediaType {
         
         get { return MediaType(libvlc_media_get_type(rawPointer)) }
-    }*/
+    }
     
     /// Get the media resource locator (`mrl`) from a media descriptor object.
     public var mrl: String? {
@@ -88,6 +88,16 @@ public final class Media {
     
     // MARK: - Methods
     
+}
+
+// MARK: - EventManager
+
+extension Media: EventEmitter {
+    
+    public var eventManager: EventManager<Media> {
+        
+        return getEventManager(libvlc_media_event_manager)
+    }
 }
 
 // MARK: - Internal
