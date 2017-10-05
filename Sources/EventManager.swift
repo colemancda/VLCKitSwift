@@ -41,7 +41,7 @@ public final class EventManager<Emitter: EventEmitter> {
     /// All the events being observed.
     public var events: Set<EventType> {
         
-        return Set(callbacks.map { $0.0 })
+        return Set(callbacks.map { $0.event })
     }
     
     // MARK: - Methods

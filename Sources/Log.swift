@@ -83,6 +83,14 @@ public extension Log {
     }
 }
 
+extension Log.Level: Comparable {
+    
+    public static func < (lhs: Log.Level, rhs: Log.Level) -> Bool {
+        
+        return rhs.rawValue < rhs.rawValue
+    }
+}
+
 public extension Log {
     
     /// Meta-information about a log message.
