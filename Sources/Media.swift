@@ -74,6 +74,8 @@ public final class Media {
     
     // MARK: - Accessors
     
+    public lazy var eventManager: EventManager<Media> = self.getEventManager(libvlc_media_event_manager)
+    
     /// Get the media type of the media descriptor object.
     public var type: MediaType {
         
@@ -98,13 +100,7 @@ public final class Media {
 
 // MARK: - EventManager
 
-extension Media: EventEmitter {
-    
-    public var eventManager: EventManager<Media> {
-        
-        return getEventManager(libvlc_media_event_manager)
-    }
-}
+extension Media: EventEmitter { }
 
 // MARK: - Internal
 

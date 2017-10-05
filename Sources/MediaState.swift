@@ -24,5 +24,6 @@ public extension Media {
 }
 
 extension Media.State: VLCEnumeration {
+    
     public typealias VLCType = libvlc_state_t
 }

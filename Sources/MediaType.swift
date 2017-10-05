@@ -9,7 +9,7 @@
 import VLC
 
 /// Media Type
-public enum MediaType: UInt32 {
+public enum MediaType: libvlc_media_type_t.RawValue {
     
     case unknown
     case file

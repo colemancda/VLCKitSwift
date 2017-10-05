@@ -78,6 +78,8 @@ public final class Player {
         }
     }
     
+    public lazy var eventManager: EventManager<Player> = self.getEventManager(libvlc_media_player_event_manager)
+    
     /// Get current movie state.
     public var state: Media.State {
         
@@ -145,13 +147,7 @@ public final class Player {
 
 // MARK: - EventManager
 
-extension Player: EventEmitter {
-    
-    public var eventManager: EventManager<Player> {
-        
-        return getEventManager(libvlc_media_player_event_manager)
-    }
-}
+extension Player: EventEmitter { }
 
 // MARK: - Supporting Types
 
