@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="E4d-u8-oXY">
+    <device id="retina4_0" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="vH5-Ty-b60">
+            <objects>
+                <navigationController id="E4d-u8-oXY" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="nSy-U1-GjP">
+                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="ZWW-4Z-fkn"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Z2-qM-9yH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-831" y="37"/>
+        </scene>
+        <!--Player-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cuF-w1-Adp">
+                                <rect key="frame" x="0.0" y="194" width="320" height="180"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="cuF-w1-Adp" secondAttribute="height" multiplier="1280:720" id="l02-jn-zrc"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="cuF-w1-Adp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="27k-A1-KtE"/>
+                            <constraint firstItem="cuF-w1-Adp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="46R-NA-4k6"/>
+                            <constraint firstAttribute="trailing" secondItem="cuF-w1-Adp" secondAttribute="trailing" id="VVY-c1-Txv"/>
+                            <constraint firstItem="cuF-w1-Adp" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="zOL-nS-rXf"/>
+                        </constraints>
+                    </view>
+                    <toolbarItems>
+                        <barButtonItem systemItem="play" id="mwS-28-UWO">
+                            <connections>
+                                <action selector="play:" destination="BYZ-38-t0r" id="e6b-Xf-moi"/>
+                            </connections>
+                        </barButtonItem>
+                    </toolbarItems>
+                    <navigationItem key="navigationItem" title="Player" id="niE-aQ-xVk">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="organize" id="iMW-ue-dD0">
+                                <connections>
+                                    <action selector="open:" destination="BYZ-38-t0r" id="hyf-0D-CqN"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="URL" id="Pjc-q4-tbP">
+                                <connections>
+                                    <action selector="openURL:" destination="BYZ-38-t0r" id="SOL-8K-8AI"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="playBarButtonItem" destination="mwS-28-UWO" id="WXc-W4-mKP"/>
+                        <outlet property="playerView" destination="cuF-w1-Adp" id="72w-D3-XLr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="33.75" y="34.859154929577464"/>
+        </scene>
+    </scenes>
+</document>

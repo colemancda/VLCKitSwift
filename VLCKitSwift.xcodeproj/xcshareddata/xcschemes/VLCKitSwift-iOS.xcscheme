@@ -34,6 +34,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E9AEDFB1F86194B0079984F"
+               BuildableName = "VLCUITests.xctest"
+               BlueprintName = "VLCUITests"
+               ReferencedContainer = "container:VLCKitSwift.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "52D6D9851BEFF229002C0205"
                BuildableName = "VLCKitSwift-iOS Tests.xctest"
                BlueprintName = "VLCKitSwift-iOS Tests"
