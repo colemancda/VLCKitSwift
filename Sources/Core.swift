@@ -6,8 +6,7 @@
 //  Copyright © 2017 ColemanCDA. All rights reserved.
 //
 
-import CVLC
-import Foundation
+import VLC
 
 /// Object used for the core functionality of VLC.
 public final class Core {

@@ -6,7 +6,7 @@
 //  Copyright © 2017 ColemanCDA. All rights reserved.
 //
 
-import CVLC
+import VLC
 
 public final class Player {
     
