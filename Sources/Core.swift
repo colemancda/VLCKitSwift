@@ -25,7 +25,7 @@ public final class Core {
         // unregister and reset logging (in case Swift object is released before C instance)
         self.log = nil
     }
-
+    
     internal init(_ managedPointer: ManagedPointer<UnmanagedPointer>) {
         
         self.managedPointer = managedPointer

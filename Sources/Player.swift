@@ -123,6 +123,27 @@ public final class Player {
         return Int(count)
     }
     
+    /// Get movie position as percentage between `0.0` and `1.0`.
+    public var position: Float {
+        
+        get { return libvlc_media_player_get_position(rawPointer) }
+        
+        set { libvlc_media_player_set_position(rawPointer, newValue) }
+    }
+    
+    /// Get title chapter count
+    ///
+    /// - Returns: Number of chapters in title or `nil`.
+    public func chapters(for title: Int) -> UInt? {
+        
+        let count = libvlc_media_player_get_chapter_count_for_title(rawPointer, Int32(title))
+        
+        guard count != .error
+            else { return nil }
+        
+        return UInt(count)
+    }
+    
     // MARK: - Methods
     
     /// Play media.
