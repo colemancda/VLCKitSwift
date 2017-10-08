@@ -17,14 +17,34 @@ final class ViewController: UIViewController {
     
     @IBOutlet private(set) weak var playerView: UIView!
     
-    @IBOutlet fileprivate(set) var playBarButtonItem: UIBarButtonItem! {
-        
-        didSet { toolbarItems = [playBarButtonItem] }
-    }
+    @IBOutlet private(set) weak var topControlsView: UIView!
+    
+    @IBOutlet private(set) weak var playPauseButton: UIBarButtonItem!
+    
+    @IBOutlet private(set) weak var previousButton: UIBarButtonItem!
+    
+    @IBOutlet private(set) weak var nextButton: UIBarButtonItem!
+    
+    @IBOutlet private(set) weak var timeSlider: UISlider!
+    
+    @IBOutlet private(set) weak var streamingProgressIndicatorSlider: UISlider!
+    
+    @IBOutlet private(set) weak var loadingViewContainer: UIView!
+    
+    @IBOutlet private(set) weak var activityIndicator: UIActivityIndicatorView!
+    
+    @IBOutlet private(set) weak var elapsedTimeLabel: UILabel!
+    
+    @IBOutlet private(set) weak var remainingTimeLabel: UILabel!
     
     // MARK: - Properties
     
-    fileprivate lazy var mediaPlayer: Player = Player()
+    private lazy var mediaPlayer: Player = Player()
+    
+    private var mediaURL: URL? {
+        
+        didSet { if let url = mediaURL { playMedia(at: url) } }
+    }
     
     // MARK: - Loading
     
@@ -32,12 +52,10 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        // configure media player
-        //mediaPlayer.delegate = self
-        mediaPlayer.drawable = .view(playerView)
+        configureView()
         
-        // show toolbar
-        self.navigationController?.setToolbarHidden(false, animated: true)
+        // configure media player
+        mediaPlayer.drawable = .view(playerView)
         
         // setup player notifications
         mediaPlayer.eventManager.register(event: .mediaPlayerMediaChanged, callback: mediaPlayerStateChanged)
@@ -48,6 +66,10 @@ final class ViewController: UIViewController {
         mediaPlayer.eventManager.register(event: .mediaPlayerStopped, callback: mediaPlayerStateChanged)
         mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
         mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
+            DispatchQueue.main.async { [unowned self] in self.configurePositionChange() }
+        })
     }
     
     // MARK: - Actions
@@ -82,7 +104,7 @@ final class ViewController: UIViewController {
             
             guard let url = URL(string: text) else { return }
             
-            self?.playMedia(at: url)
+            self?.mediaURL = url
         }))
         
         alert.addTextField {
@@ -92,7 +114,7 @@ final class ViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    @IBAction func play(_ sender: AnyObject? = nil) {
+    @IBAction func playPause(_ sender: AnyObject? = nil) {
         
         let oldState = mediaPlayer.isPlaying
         
@@ -100,10 +122,10 @@ final class ViewController: UIViewController {
         
         if shouldPlay {
             
-            if mediaPlayer.state == .stopped {
+            if mediaPlayer.state == .ended {
                 
                 // reset player
-                //mediaPlayer.media = Media(url: mediaPlayer.media.url)
+                mediaPlayer.position = 0
             }
             
             mediaPlayer.play()
@@ -114,27 +136,57 @@ final class ViewController: UIViewController {
         }
     }
     
+    @IBAction func changePosition(_ sender: UISlider) {
+                
+        mediaPlayer.pause()
+        
+        mediaPlayer.position = sender.value
+    }
+    
     // MARK: - Private Methods
     
     private func configureView() {
         
+        let emptyMedia = self.mediaURL == nil
         let isPlaying = mediaPlayer.state == .playing
+        let isBuffering = mediaPlayer.state == .opening
         
-        let playButton: (item: UIBarButtonSystemItem, label: String) = isPlaying ? (.pause, "Pause") : (.play, "Play")
+        // hide or show media player view and controls
+        self.playerView.isHidden = emptyMedia
+        self.topControlsView.isHidden = emptyMedia
+        self.navigationController?.setToolbarHidden(emptyMedia || isBuffering, animated: true)
+        self.loadingViewContainer.isHidden = isBuffering == false
+        self.timeSlider.isHidden = isBuffering
+        self.streamingProgressIndicatorSlider.isHidden = isBuffering
         
-        playBarButtonItem = UIBarButtonItem(barButtonSystemItem: playButton.item, target: self, action: #selector(play))
-        playBarButtonItem.accessibilityLabel = playButton.label
+        // convigure loading view
+        if isBuffering, self.activityIndicator.isAnimating == false {
+            
+            self.activityIndicator.startAnimating()
+            
+        } else {
+            
+            self.activityIndicator.isHidden = false
+            self.activityIndicator.stopAnimating()
+        }
+        
+        // configure play button
+        configurePlayPauseButton()
+        
+        configurePositionChange()
     }
     
     fileprivate func playMedia(at url: URL) {
         
         // initialize media
         guard let media = Media(url: url)
-            else { return }
+            else { fatalError("Invalid url: \(url)") }
         
         // play
         mediaPlayer.media = media
         mediaPlayer.play()
+        
+        // callbacks will trigger UI changes
     }
     
     private func mediaPlayerStateChanged() {
@@ -152,13 +204,45 @@ final class ViewController: UIViewController {
             controller.configureView()
         }
     }
+    
+    private func configurePositionChange() {
+        
+        let position = mediaPlayer.position
+        
+        print("Position changed to \(position)")
+        
+        self.timeSlider.value = position
+    }
+    
+    private func configurePlayPauseButton() {
+        
+        let isPlaying = mediaPlayer.state == .playing
+        
+        let systemItem: UIBarButtonSystemItem = isPlaying ? .pause : .play
+        
+        let label = isPlaying ? "Pause" : "Play"
+        
+        var toolbarItems = self.toolbarItems ?? []
+        
+        guard let index = toolbarItems.index(of: self.playPauseButton) else { return }
+        
+        let newButton = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(playPause))
+        
+        newButton.accessibilityLabel = label
+        
+        self.playPauseButton = newButton
+        
+        toolbarItems[index] = newButton
+        
+        self.toolbarItems = toolbarItems
+    }
 }
 
 extension ViewController: UIDocumentPickerDelegate {
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
         
-        playMedia(at: url)
+        self.mediaURL = url
     }
     
     public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
