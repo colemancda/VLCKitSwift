@@ -122,10 +122,10 @@ final class ViewController: UIViewController {
         
         if shouldPlay {
             
-            if mediaPlayer.state == .ended {
+            if mediaPlayer.state == .ended, let url = self.mediaURL {
                 
                 // reset player
-                mediaPlayer.position = 0
+                mediaPlayer.media = Media(url: url)
             }
             
             mediaPlayer.play()

@@ -468,6 +468,14 @@ internal struct CopyOnWrite <Reference: CopyableHandle> {
 internal extension CInt {
     static var success: CInt { return 0 }
     static var error: CInt { return -1 }
+    
+    var nonErrorValue: UInt? {
+        
+        guard self != .error
+            else { return nil }
+        
+        return UInt(self)
+    }
 }
 
 internal extension CInt {

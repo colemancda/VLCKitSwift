@@ -113,14 +113,10 @@ public final class Player {
     }
     
     /// The number of available audio tracks.
-    public var trackCount: Int? {
+    public var trackCount: UInt? {
         
         // -1 if unavailable.
-        let count = libvlc_audio_get_track_count(rawPointer)
-        
-        guard count != .error else { return nil }
-        
-        return Int(count)
+        get { return libvlc_audio_get_track_count(rawPointer).nonErrorValue }
     }
     
     /// Get movie position as percentage between `0.0` and `1.0`.
@@ -131,17 +127,42 @@ public final class Player {
         set { libvlc_media_player_set_position(rawPointer, newValue) }
     }
     
+    /// The number of video outputs this media player has.
+    public var videoOutputsCount: UInt {
+        
+        get { return UInt(libvlc_media_player_has_vout(rawPointer)) }
+    }
+    
+    /// The current movie time (in ms).
+    ///
+    /// - Note: Setting the movie time has no effect if no media is being played.
+    /// Not all formats and protocols support this.
+    public var time: Time {
+        
+        get { return Time(rawValue: libvlc_media_player_get_time(rawPointer)) }
+        
+        set { return libvlc_media_player_set_time(rawPointer, newValue.rawValue) }
+    }
+    
+    /// Get movie chapter count.
+    public var chapters: UInt? {
+        
+        get { return libvlc_media_player_get_chapter_count(rawPointer).nonErrorValue }
+    }
+    
+    public var currentChapter: UInt? {
+        
+        get { return libvlc_media_player_get_chapter(rawPointer).nonErrorValue }
+        
+        set { libvlc_media_player_set_chapter(rawPointer, CInt(newValue ?? 0)) }
+    }
+    
     /// Get title chapter count
     ///
     /// - Returns: Number of chapters in title or `nil`.
     public func chapters(for title: Int) -> UInt? {
         
-        let count = libvlc_media_player_get_chapter_count_for_title(rawPointer, Int32(title))
-        
-        guard count != .error
-            else { return nil }
-        
-        return UInt(count)
+        return libvlc_media_player_get_chapter_count_for_title(rawPointer, Int32(title)).nonErrorValue
     }
     
     // MARK: - Methods
