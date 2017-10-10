@@ -67,21 +67,25 @@ extension Time: CustomStringConvertible {
         guard rawValue != .max, rawValue != .min
             else { return Time.emptyDescription }
         
-        let duration = abs(seconds)
+        let duration = seconds
         
-        if duration > 3600 {
+        let positiveDuration = abs(seconds)
+        
+        let sign = duration < 0 ? "-" : ""
+        
+        if positiveDuration > 3600 {
             
-            return String(format: "%s%01ld:%02ld:%02ld",
-                          duration < 0 ? "-" : "",
-                          duration / 3600.0,
-                          duration.truncatingRemainder(dividingBy: 60.0))
+            return String(format: "%@%01ld:%02ld:%02ld",
+                          sign,
+                          Int(positiveDuration / 3600.0),
+                          Int(positiveDuration.truncatingRemainder(dividingBy: 60.0)))
             
         } else {
             
-            return String(format: "%s%02ld:%02ld",
-                          duration < 0 ? "-" : "",
-                          (duration / 60.0).truncatingRemainder(dividingBy: 60.0),
-                          duration.truncatingRemainder(dividingBy: 60.0))
+            return String(format: "%@%02ld:%02ld",
+                          sign,
+                          Int((positiveDuration / 60.0).truncatingRemainder(dividingBy: 60.0)),
+                          Int(positiveDuration.truncatingRemainder(dividingBy: 60.0)))
         }
     }
 }

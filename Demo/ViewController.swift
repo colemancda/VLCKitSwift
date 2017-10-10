@@ -221,7 +221,7 @@ final class ViewController: UIViewController {
             
             elapsedTimeText = currentTime.description
             
-            let remainingTime = duration - currentTime
+            let remainingTime = currentTime - duration
             
             remainingTimeText = remainingTime.description
             
