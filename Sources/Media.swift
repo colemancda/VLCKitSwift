@@ -101,6 +101,19 @@ public final class Media {
     }
 }
 
+// MARK: - Raw Pointer Access
+
+public extension Media {
+    
+    /// Access the underlying C structure instance.
+    ///
+    /// - Note: The pointer is only guarenteed to be valid for the lifetime of the closure.
+    func withUnsafeRawPointer <Result> (_ body: (OpaquePointer) throws -> Result) rethrows -> Result {
+        
+        return try body(rawPointer)
+    }
+}
+
 // MARK: - EventManager
 
 extension Media: EventEmitter { }

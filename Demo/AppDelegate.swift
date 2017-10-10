@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-        VLCKitSwift.Core.shared.log = { if $0.level > .notice { print("VLC: (\($0.level))", $0.message) } }
+        VLCKitSwift.Core.shared.log = { print("VLC: (\($0.level))", $0.message) }
         
         return true
     }
