@@ -465,20 +465,11 @@ internal struct CopyOnWrite <Reference: CopyableHandle> {
 
 // MARK: - Swift stdlib extensions
 
-internal extension CInt {
-    static var success: CInt { return 0 }
-    static var error: CInt { return -1 }
+internal extension SignedInteger {
     
-    var nonErrorValue: UInt? {
-        
-        guard self != .error
-            else { return nil }
-        
-        return UInt(self)
-    }
-}
-
-internal extension CInt {
+    static var success: Self { return 0 }
+    
+    static var error: Self { return -1 }
     
     var boolValue: Bool {
         switch self {
@@ -486,6 +477,17 @@ internal extension CInt {
         case 0: return false
         default: return self > 0
         }
+    }
+}
+
+internal extension CInt {
+    
+    var nonErrorValue: UInt? {
+        
+        guard self != .error
+            else { return nil }
+        
+        return UInt(self)
     }
 }
 

@@ -66,9 +66,11 @@ final class ViewController: UIViewController {
         mediaPlayer.eventManager.register(event: .mediaPlayerStopped, callback: mediaPlayerStateChanged)
         mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
         mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: {
+            DispatchQueue.main.async { [unowned self] in self.configureViewForTimeChange() }
+        })
         mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
-            DispatchQueue.main.async { [unowned self] in self.configurePositionChange() }
+            DispatchQueue.main.async { [unowned self] in self.configureViewForPositionChange() }
         })
     }
     
@@ -138,7 +140,10 @@ final class ViewController: UIViewController {
     
     @IBAction func changePosition(_ sender: UISlider) {
                 
-        mediaPlayer.pause()
+        if mediaPlayer.state == .playing {
+            
+            mediaPlayer.pause()
+        }
         
         mediaPlayer.position = sender.value
     }
@@ -172,8 +177,8 @@ final class ViewController: UIViewController {
         
         // configure play button
         configurePlayPauseButton()
-        
-        configurePositionChange()
+        configureViewForPositionChange()
+        configureViewForTimeChange()
     }
     
     fileprivate func playMedia(at url: URL) {
@@ -205,7 +210,34 @@ final class ViewController: UIViewController {
         }
     }
     
-    private func configurePositionChange() {
+    private func configureViewForTimeChange() {
+        
+        let elapsedTimeText: String
+        
+        let remainingTimeText: String
+        
+        if let currentTime = mediaPlayer.time,
+            let duration = mediaPlayer.media?.duration {
+            
+            elapsedTimeText = currentTime.description
+            
+            let remainingTime = duration - currentTime
+            
+            remainingTimeText = remainingTime.description
+            
+        } else {
+            
+            elapsedTimeText = Time?.none.description
+            
+            remainingTimeText = Time?.none.description
+        }
+        
+        self.elapsedTimeLabel.text = elapsedTimeText
+        
+        self.remainingTimeLabel.text = remainingTimeText
+    }
+    
+    private func configureViewForPositionChange() {
         
         let position = mediaPlayer.position
         
@@ -250,4 +282,3 @@ extension ViewController: UIDocumentPickerDelegate {
         controller.dismiss(animated: true, completion: nil)
     }
 }
-

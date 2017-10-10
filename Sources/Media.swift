@@ -94,8 +94,11 @@ public final class Media {
         get { return State(libvlc_media_get_state(rawPointer)) }
     }
     
-    // MARK: - Methods
-    
+    /// Duration of media descriptor object item.
+    public var duration: Time? {
+        
+        get { return libvlc_media_get_duration(rawPointer).nonErrorTime }
+    }
 }
 
 // MARK: - EventManager

@@ -68,7 +68,7 @@ public final class Player {
     
     #endif
     
-    /// Strong reference to internal handle
+    // Strong reference to internal handle
     public var media: Media? {
         
         didSet {
@@ -137,11 +137,11 @@ public final class Player {
     ///
     /// - Note: Setting the movie time has no effect if no media is being played.
     /// Not all formats and protocols support this.
-    public var time: Time {
+    public var time: Time? {
         
-        get { return Time(rawValue: libvlc_media_player_get_time(rawPointer)) }
+        get { return libvlc_media_player_get_time(rawPointer).nonErrorTime }
         
-        set { return libvlc_media_player_set_time(rawPointer, newValue.rawValue) }
+        set { return libvlc_media_player_set_time(rawPointer, newValue.timeValue) }
     }
     
     /// Get movie chapter count.
