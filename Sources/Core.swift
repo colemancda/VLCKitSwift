@@ -31,7 +31,7 @@ public final class Core {
         self.managedPointer = managedPointer
     }
     
-    internal convenience init?(configuration: Configuration = .default) {
+    public convenience init?(configuration: Configuration = .default) {
         
         let options = configuration.options.rawValues
         
