@@ -124,7 +124,8 @@ final class ViewController: UIViewController {
         
         if shouldPlay {
             
-            if mediaPlayer.state == .ended, let url = self.mediaURL {
+            if mediaPlayer.state == .ended,
+                let url = self.mediaURL {
                 
                 // reset player
                 mediaPlayer.media = Media(url: url)
@@ -146,6 +147,8 @@ final class ViewController: UIViewController {
         }
         
         mediaPlayer.position = sender.value
+        
+        configureViewForTimeChange()
     }
     
     // MARK: - Private Methods
