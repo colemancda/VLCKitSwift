@@ -127,6 +127,18 @@ public final class Player {
         set { libvlc_media_player_set_position(rawPointer, newValue) }
     }
     
+    public var rate: Float {
+        
+        get { return libvlc_media_player_get_rate(rawPointer) }
+        
+        set { libvlc_media_player_set_rate(rawPointer, newValue) }
+    }
+    
+    public var hasVideoOutput: Bool {
+        
+        get { return libvlc_media_player_has_vout(rawPointer).boolValue }
+    }
+    
     /// The number of video outputs this media player has.
     public var videoOutputsCount: UInt {
         
@@ -185,6 +197,21 @@ public final class Player {
         
         return libvlc_media_player_stop(rawPointer)
     }
+    
+    // MARK: - Subscript
+    
+    public subscript (videoSize index: UInt) -> (width: UInt, height: UInt)? {
+        
+        get {
+            
+            var size: (width: UInt32, height: UInt32) = (0,0)
+            
+            guard libvlc_video_get_size(rawPointer, UInt32(index), &size.width, &size.height) == .success
+                else { return nil }
+            
+            return (UInt(size.width), UInt(size.height))
+        }
+    }
 }
 
 // MARK: - Raw Pointer Access
@@ -205,20 +232,6 @@ public extension Player {
 extension Player: EventEmitter { }
 
 // MARK: - Supporting Types
-
-public extension Player {
-    
-    public enum State {
-        
-        case stopped
-        case opening
-        case buffering
-        case ended
-        case error
-        case playing
-        case paused
-    }
-}
 
 // MARK: - Internal
 

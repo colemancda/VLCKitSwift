@@ -470,6 +470,9 @@ internal extension SignedInteger {
     static var success: Self { return 0 }
     
     static var error: Self { return -1 }
+}
+
+internal extension BinaryInteger {
     
     var boolValue: Bool {
         switch self {

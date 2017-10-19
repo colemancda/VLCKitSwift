@@ -21,19 +21,29 @@ final class VLCKitSwiftTests: XCTestCase {
         
         let mediaPlayer = Player(media: media)
         
-        let expectation = self.expectation(description: "Video finished playing")
-        expectation.assertForOverFulfill = false
+        let playingExpectation = self.expectation(description: "Video finished playing")
+        playingExpectation.assertForOverFulfill = false
+        
+        let videoSizeExpectation = self.expectation(description: "Video Size")
+        videoSizeExpectation.assertForOverFulfill = false
         
         // notification handler
         func mediaPlayerStateChanged() {
             
             print("State changed to \(mediaPlayer.state)")
             
+            if let videoSize = mediaPlayer[videoSize: 0],
+                videoSize.width > 0,
+                videoSize.height > 0 {
+                
+                videoSizeExpectation.fulfill()
+            }
+            
             switch mediaPlayer.state {
                 
             case .ended:
                 
-                expectation.fulfill()
+                playingExpectation.fulfill()
                 
             case .error:
                 
