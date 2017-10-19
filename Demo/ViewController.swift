@@ -39,7 +39,7 @@ final class ViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var mediaPlayer = Player()
+    private var mediaPlayer: Player?
     
     private var mediaURL: URL? {
         
@@ -99,9 +99,11 @@ final class ViewController: UIViewController {
     
     @IBAction func playPause(_ sender: AnyObject? = nil) {
         
-        background { (controller) in
+        let mediaURL = self.mediaURL
+        
+        background { (player) in
             
-            let mediaPlayer = controller.mediaPlayer
+            guard let mediaPlayer = player else { return }
             
             let oldState = mediaPlayer.isPlaying
             
@@ -110,7 +112,7 @@ final class ViewController: UIViewController {
             if shouldPlay {
                 
                 if mediaPlayer.state == .ended,
-                    let url = self.mediaURL {
+                    let url = mediaURL {
                     
                     // reset player
                     mediaPlayer.stop()
@@ -130,9 +132,9 @@ final class ViewController: UIViewController {
         
         let newValue = sender.value
         
-        background { (controller) in
+        background { [weak self] (player) in
             
-            let mediaPlayer = controller.mediaPlayer
+            guard let mediaPlayer = player else { return }
             
             if mediaPlayer.state == .playing {
                 
@@ -142,15 +144,15 @@ final class ViewController: UIViewController {
             mediaPlayer.position = newValue
             
             // update UI
-            DispatchQueue.main.async { [weak self] in self?.configureViewForTimeChange() }
+            self?.main { $0.configureViewForTimeChange() }
         }
-        
-        
     }
     
     // MARK: - Private Methods
     
     private func configureView() {
+        
+        assert(Thread.isMainThread, "Should only be called from main thread")
         
         let emptyMedia = self.mediaURL == nil
         let isPlaying = mediaPlayer.state == .playing
@@ -181,55 +183,60 @@ final class ViewController: UIViewController {
         configureViewForTimeChange()
     }
     
-    private func setupPlayer() {
-        
-        mediaPlayer.stop()
-        mediaPlayer = Player()
-        
-        // configure media player
-        mediaPlayer.drawable = .view(playerView)
-        
-        // setup player notifications
-        mediaPlayer.eventManager.register(event: .mediaPlayerMediaChanged, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerPlaying, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerPaused, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerEncounteredError, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerEndReached, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerStopped, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: {
-            DispatchQueue.main.async { [unowned self] in self.configureViewForTimeChange() }
-        })
-        mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
-            DispatchQueue.main.async { [unowned self] in self.configureViewForPositionChange() }
-        })
-    }
-    
     fileprivate func playMedia(at url: URL) {
         
-        background { (controller) in
-            
-            controller.setupPlayer()
+        assert(Thread.isMainThread, "Should only be called from main thread")
+        
+        let playerView = self.playerView!
+        
+        let mediaPlayerStateChanged = self.mediaPlayerStateChanged
+        
+        background { [weak self] (player) in
             
             // initialize media
             guard let media = Media(url: url)
                 else { fatalError("Invalid url: \(url)") }
             
+            let oldPlayer = player
+            oldPlayer?.stop() // stop playing
+            
+            // create new player
+            let mediaPlayer = Player()
+            
+            // configure media player
+            mediaPlayer.drawable = .view(playerView)
+            
+            // setup player notifications
+            mediaPlayer.eventManager.register(event: .mediaPlayerMediaChanged, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerPlaying, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerPaused, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerEncounteredError, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerEndReached, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerStopped, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
+            mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: {
+                DispatchQueue.main.async { [unowned self] in self.configureViewForTimeChange() }
+            })
+            mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
+                DispatchQueue.main.async { [unowned self] in self.configureViewForPositionChange() }
+            })
+            
             // play
-            controller.mediaPlayer.media = media
-            controller.playPause()
+            mediaPlayer.media = media
+            player = mediaPlayer
             
             // callbacks will trigger UI changes
+            self?.main { $0.playPause() }
         }
     }
     
     @objc(VLCBlock)
     final class Block: NSObject {
         
-        let block: (ViewController) -> ()
+        let block: (inout Player?) -> ()
         
-        init(_ block: @escaping (ViewController) -> ()) {
+        init(_ block: @escaping (inout Player?) -> ()) {
             
             self.block = block
         }
@@ -238,37 +245,43 @@ final class ViewController: UIViewController {
     @objc(backgroundMethod:)
     private func backgroundMethod(_ async: Block) {
         
-        guard Thread.isMainThread else { async.block(self); return }
+        guard Thread.isMainThread else { async.block(&self.mediaPlayer); return }
         
         performSelector(inBackground: #selector(backgroundMethod), with: async)
     }
     
-    private func background(_ async: @escaping (ViewController) -> ()) {
+    private func background(_ async: @escaping (inout Player?) -> ()) {
         
-        guard Thread.isMainThread else { async(self); return }
+        guard Thread.isMainThread else { async(&self.mediaPlayer); return }
         
         let block = Block(async)
         
         performSelector(inBackground: #selector(backgroundMethod), with: block)
     }
     
-    private func mediaPlayerStateChanged() {
+    private func main(_ async: @escaping (ViewController) -> ()) {
         
         DispatchQueue.main.async { [weak self] in
-            
             guard let controller = self else { return }
-            
-            let mediaPlayer = controller.mediaPlayer
-            
-            assert(Thread.isMainThread, "Should only be called from main thread")
-            
-            print("State changed to \(mediaPlayer.state)")
-            
-            //controller.configureView()
+            async(controller)
         }
     }
     
+    private func sync <Result> (_ block: @escaping (Player?) throws -> Result) rethrows {
+        
+        block()
+    }
+    
+    private func mediaPlayerStateChanged() {
+        
+        background { if let player = $0 { print("State changed to \(player.state)") } }
+        
+        main { $0.configureView() }
+    }
+    
     private func configureViewForTimeChange() {
+        
+        assert(Thread.isMainThread, "Should only be called from main thread")
         
         let elapsedTimeText: String
         
@@ -297,6 +310,8 @@ final class ViewController: UIViewController {
     
     private func configureViewForPositionChange() {
         
+        assert(Thread.isMainThread, "Should only be called from main thread")
+        
         let position = mediaPlayer.position
         
         print("Position changed to \(position)")
@@ -305,6 +320,8 @@ final class ViewController: UIViewController {
     }
     
     private func configurePlayPauseButton() {
+        
+        assert(Thread.isMainThread, "Should only be called from main thread")
         
         let isPlaying = mediaPlayer.state == .playing
         
