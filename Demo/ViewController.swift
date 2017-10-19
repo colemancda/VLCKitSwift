@@ -99,11 +99,6 @@ final class ViewController: UIViewController {
     
     @IBAction func playPause(_ sender: AnyObject? = nil) {
         
-        guard Thread.isMainThread == false else {
-            performSelector(inBackground: #selector(playPause), with: nil)
-            return
-        }
-        
         let oldState = mediaPlayer.isPlaying
         
         let shouldPlay = oldState == false
@@ -114,7 +109,7 @@ final class ViewController: UIViewController {
                 let url = self.mediaURL {
                 
                 // reset player
-                stop()
+                mediaPlayer.stop()
                 mediaPlayer.media = Media(url: url)
             }
             
@@ -126,26 +121,26 @@ final class ViewController: UIViewController {
         }
     }
     
-    @IBAction func stop(_ sender: AnyObject? = nil) {
-        
-        guard Thread.isMainThread == false else {
-            performSelector(inBackground: #selector(stop), with: nil)
-            return
-        }
-        
-        mediaPlayer.stop()
-    }
-    
     @IBAction func changePosition(_ sender: UISlider) {
-                
-        if mediaPlayer.state == .playing {
+        
+        let newValue = sender.value
+        
+        background { (controller) in
             
-            mediaPlayer.pause()
+            let mediaPlayer = controller.mediaPlayer
+            
+            if mediaPlayer.state == .playing {
+                
+                mediaPlayer.pause()
+            }
+            
+            mediaPlayer.position = newValue
+            
+            // update UI
+            DispatchQueue.main.async { [weak self] in self?.configureViewForTimeChange() }
         }
         
-        mediaPlayer.position = sender.value
         
-        configureViewForTimeChange()
     }
     
     // MARK: - Private Methods
@@ -183,8 +178,7 @@ final class ViewController: UIViewController {
     
     private func setupPlayer() {
         
-        stop()
-        
+        mediaPlayer.stop()
         mediaPlayer = Player()
         
         // configure media player
@@ -209,17 +203,30 @@ final class ViewController: UIViewController {
     
     fileprivate func playMedia(at url: URL) {
         
-        setupPlayer()
+        background { (controller) in
+            
+            controller.setupPlayer()
+            
+            // initialize media
+            guard let media = Media(url: url)
+                else { fatalError("Invalid url: \(url)") }
+            
+            // play
+            controller.mediaPlayer.media = media
+            controller.playPause()
+            
+            // callbacks will trigger UI changes
+        }
+    }
+    
+    private func background(_ async: @escaping (ViewController) -> ()) {
         
-        // initialize media
-        guard let media = Media(url: url)
-            else { fatalError("Invalid url: \(url)") }
+        guard Thread.isMainThread else { async(self); return }
         
-        // play
-        mediaPlayer.media = media
-        playPause()
-        
-        // callbacks will trigger UI changes
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let session = self else { return }
+            async(session)
+        }
     }
     
     private func mediaPlayerStateChanged() {
