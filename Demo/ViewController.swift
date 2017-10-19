@@ -46,6 +46,8 @@ final class ViewController: UIViewController {
         didSet { if let url = mediaURL { playMedia(at: url) } }
     }
     
+    private lazy var backgroundQueue = DispatchQueue(label: "VLC Queue")
+    
     // MARK: - Loading
     
     override func viewDidLoad() {
@@ -154,33 +156,41 @@ final class ViewController: UIViewController {
         
         assert(Thread.isMainThread, "Should only be called from main thread")
         
-        let emptyMedia = self.mediaURL == nil
-        let isPlaying = mediaPlayer.state == .playing
-        let isBuffering = mediaPlayer.state == .opening
-        
-        // hide or show media player view and controls
-        self.playerView.isHidden = emptyMedia
-        self.topControlsView.isHidden = emptyMedia
-        self.navigationController?.setToolbarHidden(emptyMedia || isBuffering, animated: true)
-        self.loadingViewContainer.isHidden = isBuffering == false
-        self.timeSlider.isHidden = isBuffering
-        self.streamingProgressIndicatorSlider.isHidden = isBuffering
-        
-        // convigure loading view
-        if isBuffering, self.activityIndicator.isAnimating == false {
+        background { [weak self] (player) in
             
-            self.activityIndicator.startAnimating()
+            let state = player?.state ?? .nothingSpecial
             
-        } else {
-            
-            self.activityIndicator.isHidden = false
-            self.activityIndicator.stopAnimating()
+            self?.main {
+                
+                let emptyMedia = $0.mediaURL == nil
+                let isPlaying = state == .playing
+                let isBuffering = state == .opening
+                
+                // hide or show media player view and controls
+                $0.playerView.isHidden = emptyMedia
+                $0.topControlsView.isHidden = emptyMedia
+                $0.navigationController?.setToolbarHidden(emptyMedia || isBuffering, animated: true)
+                $0.loadingViewContainer.isHidden = isBuffering == false
+                $0.timeSlider.isHidden = isBuffering
+                $0.streamingProgressIndicatorSlider.isHidden = isBuffering
+                
+                // convigure loading view
+                if isBuffering, $0.activityIndicator.isAnimating == false {
+                    
+                    $0.activityIndicator.startAnimating()
+                    
+                } else {
+                    
+                    $0.activityIndicator.isHidden = false
+                    $0.activityIndicator.stopAnimating()
+                }
+                
+                // configure play button
+                $0.configurePlayPauseButton()
+                $0.configureViewForPositionChange()
+                $0.configureViewForTimeChange()
+            }
         }
-        
-        // configure play button
-        configurePlayPauseButton()
-        configureViewForPositionChange()
-        configureViewForTimeChange()
     }
     
     fileprivate func playMedia(at url: URL) {
@@ -216,10 +226,10 @@ final class ViewController: UIViewController {
             mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
             mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
             mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: {
-                DispatchQueue.main.async { [unowned self] in self.configureViewForTimeChange() }
+                self?.main { $0.configureViewForTimeChange() }
             })
             mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
-                DispatchQueue.main.async { [unowned self] in self.configureViewForPositionChange() }
+                self?.main { $0.configureViewForPositionChange() }
             })
             
             // play
@@ -231,34 +241,16 @@ final class ViewController: UIViewController {
         }
     }
     
-    @objc(VLCBlock)
-    final class Block: NSObject {
+    @inline(__always)
+    private func background(_ async: @escaping (inout Player?) -> ()) {
         
-        let block: (inout Player?) -> ()
-        
-        init(_ block: @escaping (inout Player?) -> ()) {
-            
-            self.block = block
+        backgroundQueue.async { [weak self] in
+            guard let controller = self else { return }
+            async(&controller.mediaPlayer)
         }
     }
     
-    @objc(backgroundMethod:)
-    private func backgroundMethod(_ async: Block) {
-        
-        guard Thread.isMainThread else { async.block(&self.mediaPlayer); return }
-        
-        performSelector(inBackground: #selector(backgroundMethod), with: async)
-    }
-    
-    private func background(_ async: @escaping (inout Player?) -> ()) {
-        
-        guard Thread.isMainThread else { async(&self.mediaPlayer); return }
-        
-        let block = Block(async)
-        
-        performSelector(inBackground: #selector(backgroundMethod), with: block)
-    }
-    
+    @inline(__always)
     private func main(_ async: @escaping (ViewController) -> ()) {
         
         DispatchQueue.main.async { [weak self] in
@@ -266,11 +258,13 @@ final class ViewController: UIViewController {
             async(controller)
         }
     }
-    
-    private func sync <Result> (_ block: @escaping (Player?) throws -> Result) rethrows {
+    /*
+    @inline(__always)
+    private func sync <Result> (_ block: @escaping (Player?) -> Result) -> Result {
         
-        block()
-    }
+        // execute and wait
+        return backgroundQueue.sync(execute: { [unowned self] in block(self.mediaPlayer) })
+    }*/
     
     private func mediaPlayerStateChanged() {
         
@@ -283,65 +277,87 @@ final class ViewController: UIViewController {
         
         assert(Thread.isMainThread, "Should only be called from main thread")
         
-        let elapsedTimeText: String
-        
-        let remainingTimeText: String
-        
-        if let currentTime = mediaPlayer.time,
-            let duration = mediaPlayer.media?.duration {
+        background { [weak self] (player) in
             
-            elapsedTimeText = currentTime.description
+            let currentTime = player?.time
             
-            let remainingTime = currentTime - duration
+            let duration = player?.media?.duration
             
-            remainingTimeText = remainingTime.description
-            
-        } else {
-            
-            elapsedTimeText = Time?.none.description
-            
-            remainingTimeText = Time?.none.description
+            self?.main {
+                
+                let elapsedTimeText: String
+                
+                let remainingTimeText: String
+                
+                if let currentTime = currentTime,
+                    let duration = duration {
+                    
+                    elapsedTimeText = currentTime.description
+                    
+                    let remainingTime = currentTime - duration
+                    
+                    remainingTimeText = remainingTime.description
+                    
+                } else {
+                    
+                    elapsedTimeText = Time?.none.description
+                    
+                    remainingTimeText = Time?.none.description
+                }
+                
+                $0.elapsedTimeLabel.text = elapsedTimeText
+                
+                $0.remainingTimeLabel.text = remainingTimeText
+            }
         }
-        
-        self.elapsedTimeLabel.text = elapsedTimeText
-        
-        self.remainingTimeLabel.text = remainingTimeText
     }
     
     private func configureViewForPositionChange() {
         
         assert(Thread.isMainThread, "Should only be called from main thread")
         
-        let position = mediaPlayer.position
-        
-        print("Position changed to \(position)")
-        
-        self.timeSlider.value = position
+        background { [weak self] (player) in
+            
+            let position = player?.position ?? 0
+            
+            self?.main {
+                
+                print("Position changed to \(position)")
+                
+                $0.timeSlider.value = position
+            }
+        }
     }
     
     private func configurePlayPauseButton() {
         
         assert(Thread.isMainThread, "Should only be called from main thread")
         
-        let isPlaying = mediaPlayer.state == .playing
-        
-        let systemItem: UIBarButtonSystemItem = isPlaying ? .pause : .play
-        
-        let label = isPlaying ? "Pause" : "Play"
-        
-        var toolbarItems = self.toolbarItems ?? []
-        
-        guard let index = toolbarItems.index(of: self.playPauseButton) else { return }
-        
-        let newButton = UIBarButtonItem(barButtonSystemItem: systemItem, target: self, action: #selector(playPause))
-        
-        newButton.accessibilityLabel = label
-        
-        self.playPauseButton = newButton
-        
-        toolbarItems[index] = newButton
-        
-        self.toolbarItems = toolbarItems
+        background { [weak self] (player) in
+            
+            let isPlaying = player?.state == .playing
+            
+            self?.main {
+                
+                let systemItem: UIBarButtonSystemItem = isPlaying ? .pause : .play
+                
+                let label = isPlaying ? "Pause" : "Play"
+                
+                var toolbarItems = $0.toolbarItems ?? []
+                
+                guard let index = toolbarItems.index(of: $0.playPauseButton) else { return }
+                
+                let newButton = UIBarButtonItem(barButtonSystemItem: systemItem, target: $0, action: #selector($0.playPause))
+                
+                newButton.accessibilityLabel = label
+                
+                $0.playPauseButton = newButton
+                
+                toolbarItems[index] = newButton
+                
+                $0.toolbarItems = toolbarItems
+            }
+        }
     }
 }
 
