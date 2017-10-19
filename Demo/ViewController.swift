@@ -99,6 +99,11 @@ final class ViewController: UIViewController {
     
     @IBAction func playPause(_ sender: AnyObject? = nil) {
         
+        guard Thread.isMainThread == false else {
+            performSelector(inBackground: #selector(playPause), with: nil)
+            return
+        }
+        
         let oldState = mediaPlayer.isPlaying
         
         let shouldPlay = oldState == false
@@ -109,6 +114,7 @@ final class ViewController: UIViewController {
                 let url = self.mediaURL {
                 
                 // reset player
+                stop()
                 mediaPlayer.media = Media(url: url)
             }
             
@@ -118,6 +124,16 @@ final class ViewController: UIViewController {
             
             mediaPlayer.pause()
         }
+    }
+    
+    @IBAction func stop(_ sender: AnyObject? = nil) {
+        
+        guard Thread.isMainThread == false else {
+            performSelector(inBackground: #selector(stop), with: nil)
+            return
+        }
+        
+        mediaPlayer.stop()
     }
     
     @IBAction func changePosition(_ sender: UISlider) {
@@ -167,6 +183,8 @@ final class ViewController: UIViewController {
     
     private func setupPlayer() {
         
+        stop()
+        
         mediaPlayer = Player()
         
         // configure media player
@@ -199,7 +217,7 @@ final class ViewController: UIViewController {
         
         // play
         mediaPlayer.media = media
-        mediaPlayer.play()
+        playPause()
         
         // callbacks will trigger UI changes
     }
