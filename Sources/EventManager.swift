@@ -51,10 +51,11 @@ public final class EventManager<Emitter: EventEmitter> {
         
         // retain
         let strongSelf = self
+        let emitter = strongSelf.emitter
         
         // strongly retain emitter for duration of call,
         // or return if weak reference was released
-        guard let _ = strongSelf.emitter else { return nil }
+        guard emitter != nil else { return nil }
         
         // get result
         let result = try body(strongSelf.rawPointer)
@@ -106,7 +107,7 @@ public final class EventManager<Emitter: EventEmitter> {
     
     public func unregisterAll() {
         
-        self.events.forEach { [unowned self] in self.unregister(for: $0) }
+        self.events.forEach { [weak self] in self?.unregister(for: $0) }
     }
 }
 
