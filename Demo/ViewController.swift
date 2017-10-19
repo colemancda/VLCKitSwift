@@ -99,25 +99,30 @@ final class ViewController: UIViewController {
     
     @IBAction func playPause(_ sender: AnyObject? = nil) {
         
-        let oldState = mediaPlayer.isPlaying
-        
-        let shouldPlay = oldState == false
-        
-        if shouldPlay {
+        background { (controller) in
             
-            if mediaPlayer.state == .ended,
-                let url = self.mediaURL {
+            let mediaPlayer = controller.mediaPlayer
+            
+            let oldState = mediaPlayer.isPlaying
+            
+            let shouldPlay = oldState == false
+            
+            if shouldPlay {
                 
-                // reset player
-                mediaPlayer.stop()
-                mediaPlayer.media = Media(url: url)
+                if mediaPlayer.state == .ended,
+                    let url = self.mediaURL {
+                    
+                    // reset player
+                    mediaPlayer.stop()
+                    mediaPlayer.media = Media(url: url)
+                }
+                
+                mediaPlayer.play()
+                
+            } else {
+                
+                mediaPlayer.pause()
             }
-            
-            mediaPlayer.play()
-            
-        } else {
-            
-            mediaPlayer.pause()
         }
     }
     
@@ -219,14 +224,32 @@ final class ViewController: UIViewController {
         }
     }
     
+    @objc(VLCBlock)
+    final class Block: NSObject {
+        
+        let block: (ViewController) -> ()
+        
+        init(_ block: @escaping (ViewController) -> ()) {
+            
+            self.block = block
+        }
+    }
+    
+    @objc(backgroundMethod:)
+    private func backgroundMethod(_ async: Block) {
+        
+        guard Thread.isMainThread else { async.block(self); return }
+        
+        performSelector(inBackground: #selector(backgroundMethod), with: async)
+    }
+    
     private func background(_ async: @escaping (ViewController) -> ()) {
         
         guard Thread.isMainThread else { async(self); return }
         
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let session = self else { return }
-            async(session)
-        }
+        let block = Block(async)
+        
+        performSelector(inBackground: #selector(backgroundMethod), with: block)
     }
     
     private func mediaPlayerStateChanged() {
@@ -241,7 +264,7 @@ final class ViewController: UIViewController {
             
             print("State changed to \(mediaPlayer.state)")
             
-            controller.configureView()
+            //controller.configureView()
         }
     }
     
