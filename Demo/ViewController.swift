@@ -39,7 +39,7 @@ final class ViewController: UIViewController {
     
     // MARK: - Properties
     
-    private lazy var mediaPlayer: Player = Player()
+    private var mediaPlayer = Player()
     
     private var mediaURL: URL? {
         
@@ -53,25 +53,6 @@ final class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         configureView()
-        
-        // configure media player
-        mediaPlayer.drawable = .view(playerView)
-        
-        // setup player notifications
-        mediaPlayer.eventManager.register(event: .mediaPlayerMediaChanged, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerPlaying, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerPaused, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerEncounteredError, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerEndReached, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerStopped, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
-        mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: {
-            DispatchQueue.main.async { [unowned self] in self.configureViewForTimeChange() }
-        })
-        mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
-            DispatchQueue.main.async { [unowned self] in self.configureViewForPositionChange() }
-        })
     }
     
     // MARK: - Actions
@@ -184,7 +165,33 @@ final class ViewController: UIViewController {
         configureViewForTimeChange()
     }
     
+    private func setupPlayer() {
+        
+        mediaPlayer = Player()
+        
+        // configure media player
+        mediaPlayer.drawable = .view(playerView)
+        
+        // setup player notifications
+        mediaPlayer.eventManager.register(event: .mediaPlayerMediaChanged, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerPlaying, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerPaused, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerEncounteredError, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerEndReached, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerStopped, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerOpening, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerBuffering, callback: mediaPlayerStateChanged)
+        mediaPlayer.eventManager.register(event: .mediaPlayerTimeChanged, callback: {
+            DispatchQueue.main.async { [unowned self] in self.configureViewForTimeChange() }
+        })
+        mediaPlayer.eventManager.register(event: .mediaPlayerPositionChanged, callback: {
+            DispatchQueue.main.async { [unowned self] in self.configureViewForPositionChange() }
+        })
+    }
+    
     fileprivate func playMedia(at url: URL) {
+        
+        setupPlayer()
         
         // initialize media
         guard let media = Media(url: url)

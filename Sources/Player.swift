@@ -17,6 +17,16 @@ public final class Player {
     
     // MARK: - Initialization
     
+    deinit {
+        
+        #if os(iOS) || os(tvOS) || os(macOS)
+        // dont want Core rendering to this view
+        self.drawable = nil
+        #endif
+        
+        self.media = nil
+    }
+    
     internal init(_ managedPointer: ManagedPointer<UnmanagedPointer>) {
         
         self.managedPointer = managedPointer
@@ -68,13 +78,19 @@ public final class Player {
     
     #endif
     
-    // Strong reference to internal handle
+    // Strong reference to media and internal handle
     public var media: Media? {
         
         didSet {
             
+            let newMediaRawPointer = media?.rawPointer
+            
+            // dont update if same handle
+            guard libvlc_media_player_get_media(rawPointer) != newMediaRawPointer
+                else { return }
+            
             // update internal handle
-            libvlc_media_player_set_media(rawPointer, media?.rawPointer)
+            libvlc_media_player_set_media(rawPointer, newMediaRawPointer)
         }
     }
     
